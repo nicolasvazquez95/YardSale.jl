@@ -5,14 +5,6 @@
 # The main function get_C_b receives the graph, the Interaction Mode and the Taxation Mode
 # and returns the κ matrix and the β vector.
 
-# This is for importing the module in the documentation tests.
-```@meta
-DocTestSetup = quote
-    using MyModule
-    using Graphs
-end
-```
-
 ### Private functions
 # IMA/TMA
 function _get_kappa_beta_ima_tma(N,l,k)

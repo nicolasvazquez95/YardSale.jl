@@ -1,4 +1,5 @@
 """
+    YardSale.jl
 `YardSale.jl` is an extensible package for the study of the dynamics of wealth exchange
 models in complex networks.
 """

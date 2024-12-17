@@ -1,10 +1,18 @@
+# Add the package source directory to the LOAD_PATH
+#push!(LOAD_PATH,"../src/")
+# Load the packages
 using Documenter
 using YardSale
-
+# Documenter can automatically generate documentation for a package.
 makedocs(
     sitename = "YardSale",
     format = Documenter.HTML(),
-    modules = [YardSale]
+    modules = [YardSale],
+    pages = [
+        "Home" => "index.md",
+        "API" => "api.md",
+    ],
+    checkdocs = :none,
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.

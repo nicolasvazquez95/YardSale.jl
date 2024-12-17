@@ -1,2 +1,3 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+YardSale = "761bf6a0-a09d-4884-b565-c7f10af2b317"
