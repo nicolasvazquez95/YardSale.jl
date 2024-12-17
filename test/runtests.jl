@@ -1,6 +1,8 @@
 using YardSale
-using Test
+using Test, SafeTestsets
 
-@testset "YardSale.jl" begin
-    # Write your tests here.
+@time begin
+   @safetestset "utils/kappa_beta" begin
+        include("unit/utils/kappa_beta.jl")
+   end
 end
