@@ -15,8 +15,13 @@ using Statistics
 # Utils
 include("utils/kappa_beta.jl")
 
+# ODE
+include("ode/ode_solvers.jl")
+
 # Exported functions
 # Utils
 export get_kappa_beta
+# ODE
+export dxdt_net!, solve_ode_net
 
 end
