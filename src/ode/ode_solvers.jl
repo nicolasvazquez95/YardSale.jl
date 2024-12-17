@@ -45,7 +45,7 @@ function dxdt_net!(dxdt,x,p,t)
     # Add the redistribution term
     bjxj_n = n_1 * sum(beta .* x)
 
-    @. dxdt += T_n * (bjxj_n - b*x)
+    @. dxdt += T_n * (bjxj_n - beta*x)
 end
 
 # Solve ODE
@@ -55,40 +55,39 @@ Solve the ODE for the network model.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
     tspan::Tuple{Float64, Float64}: Tuple with initial and final time.
-    integrator::Function: ODE solver.
+    integrator::
     IM::String: Interaction matrix.
     TM::String: Topology matrix.
     T::Real: Temperature.
     seed::Integer: Random seed.
-    kwargs...: Keyword arguments for the ODE solver.
 # Details
 This function solves the ODE for the network model. It calculates the kappa and beta
 parameters, sets the initial conditions, and solves the ODE. It returns the solution.
-
+For the initial conditions, the wealth of each node is set to a random value around 1/N.
+Default solver is Tsit5(). In future versions, we will add the possibility to choose
+the solver.
+# Returns
+    sol::ODESolution: Solution of the ODE.
 # Example
 ```julia
-using DifferentialEquations
-using Graphs
-using YardSale
-
+using DifferentialEquations, Graphs, YardSale
 # Create a graph
-g = erdos_renyi_graph(100, 0.1, seed=42)
+g = erdos_renyi(100, 0.1, seed=42)
 IM, TM = "A","A"
 T = 1.0
 seed = 42
 tspan = (0.0, 10.0)
-sol = solve_ode_net(g, tspan, Tsit5(), IM, TM, T, seed)
+sol1 = solve_ode_net(g, tspan, IM, TM, T, seed)
+sol2 = solve_ode_net(g, tspan, IM, TM, T, seed, reltol=1e-6, abstol=1e-6)
 ```
 """
 function solve_ode_net(
     g::SimpleGraph{<:Integer},
-    tspan::Tuple{Float64, Float64},
-    integrator::Function,
+    tspan::Tuple{<:Real, <:Real},
     IM::String,
     TM::String,
     T::Real,
     seed::Integer;
-    # Keyword arguments for the ODE solver
     kwargs...
     )
 
@@ -99,7 +98,7 @@ function solve_ode_net(
     # Get the number of links
     l = length(edges(g))
     # Get the edgelist
-    edgelist = collect(edges(g))
+    edgelist = [[e.src,e.dst] for e in edges(g)]
 
     # Calculate kappa and beta
     kappa, beta = get_kappa_beta(g, IM, TM)
@@ -110,7 +109,6 @@ function solve_ode_net(
 
     # Parameters
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
-
     # Initial conditions
     gauss = Normal(0.0, 0.01)
     # x_i = (1/N) * (1 + epsilon_i)
@@ -120,7 +118,7 @@ function solve_ode_net(
     prob = ODEProblem(dxdt_net!, x, tspan, p)
 
     # Solve the ODE
-    sol = integrator(prob, integrator; kwargs...)
+    sol = solve(prob, Tsit5(), kwargs...)
 
     # Check if the solver was successful
     if sol.retcode != :Success

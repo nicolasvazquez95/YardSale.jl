@@ -4,7 +4,8 @@
 models in complex networks.
 """
 module YardSale
-
+# Packages
+using Reexport
 using DifferentialEquations
 using Graphs
 using Distributions
