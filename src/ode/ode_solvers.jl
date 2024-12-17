@@ -17,10 +17,10 @@ In-place function to calculate the derivatives of the network model.
 # Details
 The network model is given by the following set of ODEs:
 
-``
+```math
 \\dot{x}_i = \\frac{T}{N} (- \\beta_i x_i + \\sum_j^N \beta_j x_j) + \\sum_j^N \\kappa_{ij}
 (x_i - x_j) \\min(x_i, x_j)
-``
+```
 where ``x_i`` is the wealth of node ``i``, ``T`` is temperature, ``N`` is
 the number of nodes, ``beta_i`` is the redistribution parameter of node ``i``,
 ``kappa_{ij}`` is the exchange parameter between nodes ``i`` and ``j``.
