@@ -139,7 +139,12 @@ function solve_ode_net(
             # Double check the sum of the initial conditions
             x /= sum(x)
         else
-            throw(ArgumentError("Invalid initial conditions"))
+            throw(ArgumentError(
+                "Invalid initial conditions.
+                The sum of the initial conditions must be 1.0
+                and all values must be positive."
+                )
+            )
         end
     ## Case 5: Invalid initial conditions
     else
@@ -253,7 +258,12 @@ function solve_ode_steady_state(
             # Double check the sum of the initial conditions
             x /= sum(x)
         else
-            throw(ArgumentError("Invalid initial conditions"))
+            throw(ArgumentError(
+                "Invalid initial conditions.
+                The sum of the initial conditions must be 1.0
+                and all values must be positive."
+                )
+            )
         end
     ## Case 5: Invalid initial conditions
     else
