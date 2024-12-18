@@ -134,7 +134,12 @@ function solve_ode_net(
         x = ones(N)/N
     ## Case 4: Custom initial conditions
     elseif initial_conditions isa Vector{<:Real}
-        x = initial_conditions
+        # Check if the initial conditions are valid
+        if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
+            # Double check the sum of the initial conditions
+            x /= sum(x)
+        else
+            throw(ArgumentError("Invalid initial conditions"))
     ## Case 5: Invalid initial conditions
     else
         throw(ArgumentError("Invalid initial conditions"))
@@ -242,6 +247,13 @@ function solve_ode_steady_state(
     ## Case 4: Custom initial conditions
     elseif initial_conditions isa Vector{<:Real}
         x = initial_conditions
+        # Check if the initial conditions are valid
+        if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
+            # Double check the sum of the initial conditions
+            x /= sum(x)
+        else
+            throw(ArgumentError("Invalid initial conditions"))
+        end
     ## Case 5: Invalid initial conditions
     else
         throw(ArgumentError("Invalid initial conditions"))
