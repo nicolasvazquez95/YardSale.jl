@@ -10,7 +10,8 @@ In-place function to calculate the derivatives of the network model.
 # Arguments
     dxdt::Vector{<:Real}: Vector of derivatives.
     x::Vector{<:Real}: Vector of wealths.
-    p::Tuple{<:Integer, <:Integer, Vector{Vector{<:Integer}}, Vector{<:Integer}, Vector{<:Array}, ::Real, ::Real}: Parameters.
+    p::Tuple{<:Integer, <:Integer, Vector{Vector{<:Integer}},
+    Vector{<:Integer}, Vector{<:Array}, ::Real, ::Real}: Parameters.
     t::Float64: Time.
 
 # Details
@@ -61,7 +62,10 @@ Solve the ODE for the network model.
     seed::Integer: Random seed.
 # Optional arguments
     `integrator::SciMLAlgorithm`: An instante of the integrator to use. Default is Tsit5().
-    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions for the ODE. Default is nothing, which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
+    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions
+    for the ODE. Default is nothing, which sets the initial conditions to a random value
+    around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be
+    used as the initial conditions.
     `kwargs...`: Additional arguments for the solver.
 # Details
 This function solves the ODE for the network model. It calculates the kappa and beta
@@ -148,7 +152,8 @@ function solve_ode_net(
 end
 
 """
-    solve_ode_steady_state(g, IM, TM, T, seed; initial_conditions="noisy", integrator=Tsit5(), kwargs...)
+    solve_ode_steady_state(g, IM, TM, T, seed; initial_conditions="noisy",
+    integrator=Tsit5(), kwargs...)
 Solve the ODE for the network model using a steady state solver.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
@@ -158,12 +163,16 @@ Solve the ODE for the network model using a steady state solver.
     seed::Integer: Random seed.
 
 # Optional arguments
-    `initial_conditions::Union{String, Vector{<:Real}}`="noisy": Initial conditions for the ODE. Default is "noisy", which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
+    `initial_conditions::Union{String, Vector{<:Real}}`="noisy": Initial conditions
+    for the ODE. Default is "noisy", which sets the initial conditions to a random value
+    around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be
+    used as the initial conditions.
     `integrator::SciMLAlgorithm`: An instance of the integrator to use. Default is Tsit5().
     `kwargs...`: Additional arguments for the solver.
 # Details
 This function solves the ODE for the network model using a steady state solver.
-It is similar to `solve_ode_net`, but it uses the `DynamicSS` solver to find the steady state.
+It is similar to `solve_ode_net`, but it uses the `DynamicSS` solver to find
+the steady state.
 Instead of an ODE problem, it uses a `SteadyStateProblem` to solve the ODE.
 Reference: https://docs.sciml.ai/DiffEqDocs/stable/types/steady_state_types/
 # Returns
@@ -178,7 +187,9 @@ T = 1.0
 seed = 42
 sol1 = solve_ode_steady_state(g, IM, TM, T, seed)
 sol2 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4())
-sol3 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4(), reltol=1e-6, abstol=1e-6)
+sol3 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4(),
+                            reltol=1e-6, abstol=1e-6
+                            )
 ```
 """
 function solve_ode_steady_state(
