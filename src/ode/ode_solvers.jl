@@ -65,6 +65,7 @@ parameters, sets the initial conditions, and solves the ODE. It returns the solu
 For the initial conditions, the wealth of each node is set to a random value around 1/N.
 # Optional arguments
     `integrator::SciMLAlgorithm`: Integrator to use. Default is Tsit5().
+    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions for the ODE. Default is nothing, which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
     `kwargs...`: Additional arguments for the solver.
 # Returns
     sol::ODESolution: Solution of the ODE.
@@ -90,6 +91,7 @@ function solve_ode_net(
     T::Real,
     seed::Integer;
     integrator::SciMLAlgorithm = Tsit5(),
+    initial_conditions::Union{Nothing, Vector{<:Real}}=nothing,
     kwargs...
     )
 
@@ -111,11 +113,26 @@ function solve_ode_net(
 
     # Parameters
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
-    # Initial conditions
-    gauss = Normal(0.0, 0.01)
-    # x_i = (1/N) * (1 + epsilon_i)
-    x = n_1 * (ones(N) + rand(gauss, N))
-
+    # Set initial conditions
+    ## Case 1: Noisy initial conditions
+    if isnothing(initial_conditions)
+        gauss = Normal(0.0, 0.01)
+        # x_i = (1/N) * (1 + epsilon_i)
+        x = n_1 * (ones(N) + rand(gauss, N))
+    ## Case 2: Random initial conditions
+    elseif initial_conditions == "random"
+        x = rand(N)
+        x /= sum(x)
+    ## Case 3: Uniform initial conditions
+    elseif initial_conditions == "uniform"
+        x = ones(N)/N
+    ## Case 4: Custom initial conditions
+    elseif initial_conditions isa Vector{<:Real}
+        x = initial_conditions
+    ## Case 5: Invalid initial conditions
+    else
+        throw(ArgumentError("Invalid initial conditions"))
+    end
     # Define the ODE problem
     prob = ODEProblem(dxdt_net!, x, tspan, p)
 
@@ -127,4 +144,13 @@ function solve_ode_net(
         println("Solver failed with retcode: $(sol.retcode)")
     end
     return sol
+end
+
+
+function solve_ode_steady_state(
+    g::SimpleGraph{<:Integer},
+    IM::String,
+    TM::String,
+)
+
 end
