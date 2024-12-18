@@ -8,10 +8,9 @@
     dxdt_net!(dxdt, x, p, t)
 In-place function to calculate the derivatives of the network model.
 # Arguments
-    dxdt::Vector{Float64}: Vector of derivatives.
-    x::Vector{Float64}: Vector of wealths.
-    p::Tuple{Int64, Int64, Vector{Tuple{Int64, Int64}}, Vector{Float64}, Vector{Float64},
- Float64, Float64}: Tuple of parameters.
+    dxdt::Vector{<:Real}: Vector of derivatives.
+    x::Vector{<:Real}: Vector of wealths.
+    p::Tuple{<:Integer, <:Integer, Vector{Vector{<:Integer}}, Vector{<:Integer}, Vector{<:Array}, ::Real, ::Real}: Parameters.
     t::Float64: Time.
 
 # Details
@@ -64,8 +63,9 @@ Solve the ODE for the network model.
 This function solves the ODE for the network model. It calculates the kappa and beta
 parameters, sets the initial conditions, and solves the ODE. It returns the solution.
 For the initial conditions, the wealth of each node is set to a random value around 1/N.
-Default solver is Tsit5(). In future versions, we will add the possibility to choose
-the solver.
+# Optional arguments
+    `integrator::SciMLAlgorithm`: Integrator to use. Default is Tsit5().
+    `kwargs...`: Additional arguments for the solver.
 # Returns
     sol::ODESolution: Solution of the ODE.
 # Example
@@ -78,7 +78,8 @@ T = 1.0
 seed = 42
 tspan = (0.0, 10.0)
 sol1 = solve_ode_net(g, tspan, IM, TM, T, seed)
-sol2 = solve_ode_net(g, tspan, IM, TM, T, seed, reltol=1e-6, abstol=1e-6)
+sol2 = solve_ode_net(g, tspan, IM, TM, T, seed; integrator=RK4())
+sol3 = solve_ode_net(g, tspan, IM, TM, T, seed; integrator=RK4(), reltol=1e-6, abstol=1e-6)
 ```
 """
 function solve_ode_net(
@@ -88,6 +89,7 @@ function solve_ode_net(
     TM::String,
     T::Real,
     seed::Integer;
+    integrator::SciMLAlgorithm = Tsit5(),
     kwargs...
     )
 
@@ -118,7 +120,7 @@ function solve_ode_net(
     prob = ODEProblem(dxdt_net!, x, tspan, p)
 
     # Solve the ODE
-    sol = solve(prob, Tsit5(), kwargs...)
+    sol = solve(prob, integrator; kwargs...)
 
     # Check if the solver was successful
     if sol.retcode != :Success
