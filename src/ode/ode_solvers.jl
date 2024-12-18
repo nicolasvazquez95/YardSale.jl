@@ -55,8 +55,8 @@ Solve the ODE for the network model.
     g::SimpleGraph{<:Integer}: Graph.
     tspan::Tuple{Float64, Float64}: Tuple with initial and final time.
     integrator::
-    IM::String: Interaction matrix.
-    TM::String: Topology matrix.
+    IM::String: Interaction mode.
+    TM::String: Taxation mode.
     T::Real: Temperature.
     seed::Integer: Random seed.
 # Optional arguments
@@ -152,8 +152,8 @@ end
 Solve the ODE for the network model using a steady state solver.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
-    IM::String: Interaction matrix.
-    TM::String: Topology matrix.
+    IM::String: Interaction mode.
+    TM::String: Taxation mode.
     T::Real: Temperature.
     seed::Integer: Random seed.
 
