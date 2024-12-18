@@ -50,14 +50,14 @@ end
 
 # Solve ODE
 """
-    solve_ode_net(g, tspan, integrator, IM, TM, T, seed; kwargs...)
+    solve_ode_net(g, tspan, integrator, interaction_mode, taxation_mode, T, seed; kwargs...)
 Solve the ODE for the network model.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
     tspan::Tuple{Float64, Float64}: Tuple with initial and final time.
-    integrator::
-    IM::String: Interaction mode.
-    TM::String: Taxation mode.
+    integrator::SciMLAlgorithm: Integrator to use.
+    interaction_mode::String: Interaction mode.
+    taxation_mode::String: Taxation mode.
     T::Real: Temperature.
     seed::Integer: Random seed.
 # Optional arguments
@@ -79,20 +79,21 @@ All the parameters for the solver can be passed as keyword arguments.
 using DifferentialEquations, Graphs, YardSale
 # Create a graph
 g = erdos_renyi(100, 0.1, seed=42)
-IM, TM = "A","A"
+interaction_mode, taxation_mode = "A","A"
 T = 1.0
 seed = 42
 tspan = (0.0, 10.0)
-sol1 = solve_ode_net(g, tspan, IM, TM, T, seed)
-sol2 = solve_ode_net(g, tspan, IM, TM, T, seed; integrator=RK4())
-sol3 = solve_ode_net(g, tspan, IM, TM, T, seed; integrator=RK4(), reltol=1e-6, abstol=1e-6)
+sol1 = solve_ode_net(g, tspan, interaction_mode, taxation_mode, T, seed)
+sol2 = solve_ode_net(g, tspan, interaction_mode, taxation_mode, T, seed; integrator=RK4())
+sol3 = solve_ode_net(g, tspan, interaction_mode, taxation_mode, T, seed;
+integrator=RK4(), reltol=1e-6, abstol=1e-6)
 ```
 """
 function solve_ode_net(
     g::SimpleGraph{<:Integer},
     tspan::Tuple{<:Real, <:Real},
-    IM::String,
-    TM::String,
+    interaction_mode::String,
+    taxation_mode::String,
     T::Real,
     seed::Integer;
     integrator::SciMLAlgorithm = Tsit5(),
@@ -110,7 +111,7 @@ function solve_ode_net(
     edgelist = [[e.src,e.dst] for e in edges(g)]
 
     # Calculate kappa and beta
-    kappa, beta = get_kappa_beta(g, IM, TM)
+    kappa, beta = get_kappa_beta(g, interaction_mode, taxation_mode)
 
     # Other constants
     n_1 = 1/N
@@ -152,13 +153,13 @@ function solve_ode_net(
 end
 
 """
-    solve_ode_steady_state(g, IM, TM, T, seed; initial_conditions="noisy",
-    integrator=Tsit5(), kwargs...)
+    solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed;
+    initial_conditions="noisy",integrator=Tsit5(), kwargs...)
 Solve the ODE for the network model using a steady state solver.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
-    IM::String: Interaction mode.
-    TM::String: Taxation mode.
+    interaction_mode::String: Interaction mode.
+    taxation_mode::String: Taxation mode.
     T::Real: Temperature.
     seed::Integer: Random seed.
 
@@ -182,20 +183,20 @@ Reference: https://docs.sciml.ai/DiffEqDocs/stable/types/steady_state_types/
 using DifferentialEquations, Graphs, YardSale
 # Create a graph
 g = erdos_renyi(100, 0.1, seed=42)
-IM, TM = "A","A"
+interaction_mode, taxation_mode = "A","A"
 T = 1.0
 seed = 42
-sol1 = solve_ode_steady_state(g, IM, TM, T, seed)
-sol2 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4())
-sol3 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4(),
-                            reltol=1e-6, abstol=1e-6
+sol1 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed)
+sol2 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed; integrator=RK4())
+sol3 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed;
+                            integrator=RK4(),reltol=1e-6, abstol=1e-6
                             )
 ```
 """
 function solve_ode_steady_state(
     g::SimpleGraph{<:Integer},
-    IM::String,
-    TM::String,
+    interaction_mode::String,
+    taxation_mode::String,
     T::Real,
     seed::Integer;
     initial_conditions::Union{String, Vector{<:Real}}="noisy",
@@ -216,7 +217,7 @@ function solve_ode_steady_state(
     edgelist = [[e.src,e.dst] for e in edges(g)]
 
     # Calculate kappa and beta
-    kappa, beta = get_kappa_beta(g, IM, TM)
+    kappa, beta = get_kappa_beta(g, interaction_mode, taxation_mode)
 
     # Other constants
     n_1 = 1/N

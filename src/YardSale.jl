@@ -22,6 +22,6 @@ include("ode/ode_solvers.jl")
 # Utils
 export get_kappa_beta
 # ODE
-export dxdt_net!, solve_ode_net
+export dxdt_net!, solve_ode_net, solve_ode_net_steady_state
 
 end

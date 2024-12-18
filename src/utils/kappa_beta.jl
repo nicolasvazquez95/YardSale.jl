@@ -59,46 +59,50 @@ end
 
 ### Main function (public)
 """
-    get_kappa_beta(g::SimpleGraph{<:Integer},IM::String,TM::String)
+    get_kappa_beta(g::SimpleGraph{<:Integer},interaction_mode::String,taxation_mode::String)
 Return the κ matrix and the β vector for the ODEs, given a graph,
 an Interaction Mode and a Taxation Mode.
 # Arguments
     g::SimpleGraph{<:Integer}: Undirected graph.
-    IM::String: Interaction Mode. Can be "A" or "B".
-    TM::String: Taxation Mode. Can be "A" or "B".
+    interaction_mode::String: Interaction Mode. Can be "A" or "B".
+    taxation_mode::String: Taxation Mode. Can be "A" or "B".
 # Example
 ```julia
 g = complete_graph(4)
 YardSale.get_kappa_beta(g,"A","A")
 ```
 """
-function get_kappa_beta(g::SimpleGraph{<:Integer},IM::String,TM::String)
-    if IM=="A"
+function get_kappa_beta(
+    g::SimpleGraph{<:Integer},
+    interaction_mode::String,
+    taxation_mode::String
+    )
+    if interaction_mode=="A"
         l = length(edges(g))
         N = nv(g)
-        if TM=="A"
+        if taxation_mode=="A"
             return _get_kappa_beta_ima_tma(N,l,degree(g))
-        elseif TM=="B"
+        elseif taxation_mode=="B"
             return _get_kappa_beta_ima_tmb(N,l)
         else
-            throw(ArgumentError("Invalid TM"))
+            throw(ArgumentError("Invalid taxation mode."))
         end
-    elseif IM=="B"
+    elseif interaction_mode=="B"
         N = nv(g)
         # Edgelist is a Lx2 matrix where each row is an edge
         edgelist = transpose(hcat([[e.src, e.dst] for e in edges(g)]...))
         k = degree(g)
-        if TM=="A"
+        if taxation_mode=="A"
             # A is the adjacency matrix A_ij
             A = adjacency_matrix(g)
             return _get_kappa_beta_imb_tma(N,edgelist,k,A)
-        elseif TM=="B"
+        elseif taxation_mode=="B"
             return _get_kappa_beta_imb_tmb(N,edgelist,k)
         else
-            throw(ArgumentError("Invalid TM"))
+            throw(ArgumentError("Invalid taxation mode."))
         end
     else
-        throw(ArgumentError("Invalid IM"))
+        throw(ArgumentError("Invalid interaction mode."))
     end
     return nothing
 end
