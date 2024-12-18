@@ -59,14 +59,15 @@ Solve the ODE for the network model.
     TM::String: Topology matrix.
     T::Real: Temperature.
     seed::Integer: Random seed.
+# Optional arguments
+    `integrator::SciMLAlgorithm`: An instante of the integrator to use. Default is Tsit5().
+    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions for the ODE. Default is nothing, which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
+    `kwargs...`: Additional arguments for the solver.
 # Details
 This function solves the ODE for the network model. It calculates the kappa and beta
 parameters, sets the initial conditions, and solves the ODE. It returns the solution.
-For the initial conditions, the wealth of each node is set to a random value around 1/N.
-# Optional arguments
-    `integrator::SciMLAlgorithm`: Integrator to use. Default is Tsit5().
-    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions for the ODE. Default is nothing, which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
-    `kwargs...`: Additional arguments for the solver.
+The function uses the DifferentialEquations.jl package to solve the ODE.
+All the parameters for the solver can be passed as keyword arguments.
 # Returns
     sol::ODESolution: Solution of the ODE.
 # Example
@@ -91,7 +92,7 @@ function solve_ode_net(
     T::Real,
     seed::Integer;
     integrator::SciMLAlgorithm = Tsit5(),
-    initial_conditions::Union{Nothing, Vector{<:Real}}=nothing,
+    initial_conditions::Union{String, Vector{<:Real}}="noisy",
     kwargs...
     )
 
@@ -115,7 +116,7 @@ function solve_ode_net(
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
     # Set initial conditions
     ## Case 1: Noisy initial conditions
-    if isnothing(initial_conditions)
+    if initial_conditions == "noisy"
         gauss = Normal(0.0, 0.01)
         # x_i = (1/N) * (1 + epsilon_i)
         x = n_1 * (ones(N) + rand(gauss, N))
@@ -146,11 +147,108 @@ function solve_ode_net(
     return sol
 end
 
+"""
+    solve_ode_steady_state(g, IM, TM, T, seed; initial_conditions="noisy", integrator=Tsit5(), kwargs...)
+Solve the ODE for the network model using a steady state solver.
+# Arguments
+    g::SimpleGraph{<:Integer}: Graph.
+    IM::String: Interaction matrix.
+    TM::String: Topology matrix.
+    T::Real: Temperature.
+    seed::Integer: Random seed.
 
+# Optional arguments
+    `initial_conditions::Union{String, Vector{<:Real}}`="noisy": Initial conditions for the ODE. Default is "noisy", which sets the initial conditions to a random value around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be used as the initial conditions.
+    `integrator::SciMLAlgorithm`: An instance of the integrator to use. Default is Tsit5().
+    `kwargs...`: Additional arguments for the solver.
+# Details
+This function solves the ODE for the network model using a steady state solver.
+It is similar to `solve_ode_net`, but it uses the `DynamicSS` solver to find the steady state.
+Instead of an ODE problem, it uses a `SteadyStateProblem` to solve the ODE.
+Reference: https://docs.sciml.ai/DiffEqDocs/stable/types/steady_state_types/
+# Returns
+    sol::ODESolution: Solution of the ODE.
+# Example
+```julia
+using DifferentialEquations, Graphs, YardSale
+# Create a graph
+g = erdos_renyi(100, 0.1, seed=42)
+IM, TM = "A","A"
+T = 1.0
+seed = 42
+sol1 = solve_ode_steady_state(g, IM, TM, T, seed)
+sol2 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4())
+sol3 = solve_ode_steady_state(g, IM, TM, T, seed; integrator=RK4(), reltol=1e-6, abstol=1e-6)
+```
+"""
 function solve_ode_steady_state(
     g::SimpleGraph{<:Integer},
     IM::String,
     TM::String,
-)
+    T::Real,
+    seed::Integer;
+    initial_conditions::Union{String, Vector{<:Real}}="noisy",
+    integrator::SciMLAlgorithm = Tsit5(),
+    kwargs...
+    )
 
+    # Set the random seed
+    Random.seed!(seed)
+    # Get the number of nodes
+    N = nv(g)
+    if N == 0
+        throw(ArgumentError("Graph has no nodes."))
+    end
+    # Get the number of links
+    l = length(edges(g))
+    # Get the edgelist
+    edgelist = [[e.src,e.dst] for e in edges(g)]
+
+    # Calculate kappa and beta
+    kappa, beta = get_kappa_beta(g, IM, TM)
+
+    # Other constants
+    n_1 = 1/N
+    T_n = T/N
+
+    # Parameters
+    p = (N, l, edgelist, kappa, beta, T_n, n_1)
+    # Set initial conditions
+    ## Case 1: Noisy initial conditions
+    if initial_conditions == "noisy"
+        gauss = Normal(0.0, 0.01)
+        # x_i = (1/N) * (1 + epsilon_i)
+        x = n_1 * (ones(N) + rand(gauss, N))
+    ## Case 2: Random initial conditions
+    elseif initial_conditions == "random"
+        x = rand(N)
+        x /= sum(x)
+    ## Case 3: Uniform initial conditions
+    elseif initial_conditions == "uniform"
+        x = ones(N)/N
+    ## Case 4: Custom initial conditions
+    elseif initial_conditions isa Vector{<:Real}
+        x = initial_conditions
+    ## Case 5: Invalid initial conditions
+    else
+        throw(ArgumentError("Invalid initial conditions"))
+    end
+    # Define the ODE problem
+
+    # Set the time span to an arbitrary large value, only to define the initial ODE problem
+    tspan = (0.0, 1e6)
+    prob = ODEProblem(dxdt_net!, x, tspan, p)
+
+    # Define the Steady State problem from the ODE problem
+    ss_prob = SteadyStateProblem(prob)
+
+    # Solve the ODE with a steady state solver (DynamicSS)
+    sol = solve(ss_prob, DynamicSS(integrator); kwargs...)
+
+    # Check if the solver was successful
+    if SciMLBase.successful_retcode(sol)
+        println("Solver failed with retcode: $(sol.retcode)")
+        return
+    end
+    return sol
 end
