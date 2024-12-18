@@ -62,19 +62,30 @@ Solve the ODE for the network model.
     seed::Integer: Random seed.
 # Optional arguments
     `integrator::SciMLAlgorithm`: An instante of the integrator to use. Default is Tsit5().
-    `initial_conditions::Union{Nothing, Vector{<:Real}}`=nothing: Initial conditions
-    for the ODE. Default is nothing, which sets the initial conditions to a random value
-    around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be
-    used as the initial conditions.
+    initial_conditions::String=nothing: Initial condition. Options are
+    "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
+    chosen, the x0 argument must be provided.
+    x0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
     `kwargs...`: Additional arguments for the solver.
 # Details
 This function solves the ODE for the network model. It calculates the kappa and beta
-parameters, sets the initial conditions, and solves the ODE. It returns the solution.
+parameters, sets the initial conditions, and solves the ODE. It returns the solution in
+the standard DifferentialEquations.jl format.
+A brief description of the ODE approximation model can be found in the `dxdt_net!` function.
 The function uses the DifferentialEquations.jl package to solve the ODE.
 All the parameters for the solver can be passed as keyword arguments.
+
+The initial conditions can be set to "noisy", "random", "uniform", or a custom vector.
+- "noisy": Initial conditions are set to a random value around 1/N.
+`x = (1/N) * (1 + ϵ)` where `ϵ` is white noise with μ=0 and σ=0.01.
+- "random": Initial conditions are set to a random value, normalized to sum to 1.
+- "uniform": Initial conditions are set to 1/N.
+- "custom": Initial conditions are set to a custom vector. The vector must sum to 1.
+Also, x_i must be positive for all i.
+
 # Returns
     sol::ODESolution: Solution of the ODE.
-# Example
+# Examples
 ```julia
 using DifferentialEquations, Graphs, YardSale
 # Create a graph
@@ -98,6 +109,7 @@ function solve_ode_net(
     seed::Integer;
     integrator::SciMLAlgorithm = Tsit5(),
     initial_conditions::Union{String, Vector{<:Real}}="noisy",
+    x0::Union{Nothing, Vector{<:Real}}=nothing,
     kwargs...
     )
 
@@ -119,6 +131,7 @@ function solve_ode_net(
 
     # Parameters
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
+
     # Set initial conditions
     ## Case 1: Noisy initial conditions
     if initial_conditions == "noisy"
@@ -133,23 +146,32 @@ function solve_ode_net(
     elseif initial_conditions == "uniform"
         x = ones(N)/N
     ## Case 4: Custom initial conditions
-    elseif initial_conditions isa Vector{<:Real}
-        # Check if the initial conditions are valid
-        if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
-            # Double check the sum of the initial conditions
-            x /= sum(x)
-        else
+    elseif initial_conditions == "custom"
+        if x isa Vector{<:Real}
+            x = x0
+            # Check if the initial conditions are valid
+            if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
+                # Double check the sum of the initial conditions
+                x /= sum(x)
+            else
             throw(ArgumentError(
-                "Invalid initial conditions.
-                The sum of the initial conditions must be 1.0
+                "Invalid initial conditions. The sum of x0 must be 1.0
                 and all values must be positive."
                 )
             )
+            end
+        else
+            throw(ArgumentError("Custom initial conditions must be a vector."))
         end
     ## Case 5: Invalid initial conditions
     else
-        throw(ArgumentError("Invalid initial conditions"))
+        throw(ArgumentError(
+            "Invalid initial conditions.
+            Options are 'noisy', 'random', 'uniform', or 'custom'."
+            )
+            )
     end
+
     # Define the ODE problem
     prob = ODEProblem(dxdt_net!, x, tspan, p)
 
@@ -179,6 +201,7 @@ Solve the ODE for the network model using a steady state solver.
     for the ODE. Default is "noisy", which sets the initial conditions to a random value
     around 1/N. Other options are "random" and "uniform". If a vector is passed, it will be
     used as the initial conditions.
+    `x0::Union{Nothing, Vector{<:Real}}`=nothing: Initial wealth distribution.
     `integrator::SciMLAlgorithm`: An instance of the integrator to use. Default is Tsit5().
     `kwargs...`: Additional arguments for the solver.
 # Details
@@ -187,9 +210,12 @@ It is similar to `solve_ode_net`, but it uses the `DynamicSS` solver to find
 the steady state.
 Instead of an ODE problem, it uses a `SteadyStateProblem` to solve the ODE.
 Reference: https://docs.sciml.ai/DiffEqDocs/stable/types/steady_state_types/
+
+As in `solve_ode_net`, the initial conditions can be set to "noisy", "random", "uniform",
+or a custom vector.
 # Returns
     sol::ODESolution: Solution of the ODE.
-# Example
+# Examples
 ```julia
 using DifferentialEquations, Graphs, YardSale
 # Create a graph
@@ -211,6 +237,7 @@ function solve_ode_steady_state(
     T::Real,
     seed::Integer;
     initial_conditions::Union{String, Vector{<:Real}}="noisy",
+    x0::Union{Nothing, Vector{<:Real}}=nothing,
     integrator::SciMLAlgorithm = Tsit5(),
     kwargs...
     )
@@ -236,6 +263,7 @@ function solve_ode_steady_state(
 
     # Parameters
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
+
     # Set initial conditions
     ## Case 1: Noisy initial conditions
     if initial_conditions == "noisy"
@@ -251,24 +279,32 @@ function solve_ode_steady_state(
     elseif initial_conditions == "uniform"
         x = ones(N)/N
     ## Case 4: Custom initial conditions
-    elseif initial_conditions isa Vector{<:Real}
-        x = initial_conditions
-        # Check if the initial conditions are valid
-        if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
-            # Double check the sum of the initial conditions
-            x /= sum(x)
-        else
-            throw(ArgumentError(
-                "Invalid initial conditions.
-                The sum of the initial conditions must be 1.0
-                and all values must be positive."
+    elseif initial_conditions == "custom"
+        if x isa Vector{<:Real}
+            x = x0
+            # Check if the initial conditions are valid
+            if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
+                # Double check the sum of the initial conditions
+                x /= sum(x)
+            else
+                throw(ArgumentError(
+                    "Invalid initial conditions. The sum of x0 must be 1.0
+                    and all values must be positive."
+                    )
                 )
-            )
+            end
+        else
+            throw(ArgumentError("Custom initial conditions must be a vector."))
         end
     ## Case 5: Invalid initial conditions
     else
-        throw(ArgumentError("Invalid initial conditions"))
+        throw(ArgumentError(
+            "Invalid initial conditions.
+            Options are 'noisy', 'random', 'uniform', or 'custom'."
+            )
+        )
     end
+
     # Define the ODE problem
 
     # Set the time span to an arbitrary large value, only to define the initial ODE problem

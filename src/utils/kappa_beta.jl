@@ -66,7 +66,9 @@ an Interaction Mode and a Taxation Mode.
     g::SimpleGraph{<:Integer}: Undirected graph.
     interaction_mode::String: Interaction Mode. Can be "A" or "B".
     taxation_mode::String: Taxation Mode. Can be "A" or "B".
-# Example
+# Returns
+    Tuple{Vector{Float64},Vector{Float64}}: κ matrix and β vector.
+# Examples
 ```julia
 g = complete_graph(4)
 YardSale.get_kappa_beta(g,"A","A")
