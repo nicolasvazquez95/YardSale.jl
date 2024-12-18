@@ -31,7 +31,7 @@ function dxdt_net!(dxdt,x,p,t)
     # Set the derivatives to zero
     fill!(dxdt, 0.0)
     # Calculate the derivatives
-    @inbounds for link in 1:l
+    for link in 1:l
         # Get nodes, wealths, and kappa
         i, j = edgelist[link]
         xi, xj = x[i], x[j]
