@@ -231,6 +231,7 @@ function solve_ode_steady_state(
         gauss = Normal(0.0, 0.01)
         # x_i = (1/N) * (1 + epsilon_i)
         x = n_1 * (ones(N) + rand(gauss, N))
+        x /= sum(x)
     ## Case 2: Random initial conditions
     elseif initial_conditions == "random"
         x = rand(N)
