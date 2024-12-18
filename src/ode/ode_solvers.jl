@@ -140,6 +140,7 @@ function solve_ode_net(
             x /= sum(x)
         else
             throw(ArgumentError("Invalid initial conditions"))
+        end
     ## Case 5: Invalid initial conditions
     else
         throw(ArgumentError("Invalid initial conditions"))
