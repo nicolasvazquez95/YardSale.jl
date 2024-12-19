@@ -55,7 +55,6 @@ Solve the ODE for the network model.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
     tspan::Tuple{Float64, Float64}: Tuple with initial and final time.
-    integrator::SciMLAlgorithm: Integrator to use.
     interaction_mode::String: Interaction mode.
     taxation_mode::String: Taxation mode.
     T::Real: Temperature.

@@ -18,10 +18,16 @@ include("utils/kappa_beta.jl")
 # ODE
 include("ode/ode_solvers.jl")
 
+# Data analysis
+include("data_analysis/analysis_functions.jl")
+
 # Exported functions
 # Utils
 export get_kappa_beta
 # ODE
 export dxdt_net!, solve_ode_net, solve_ode_net_steady_state
+
+# Data analysis
+export rescale_t
 
 end
