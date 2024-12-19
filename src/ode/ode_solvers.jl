@@ -317,7 +317,7 @@ function solve_ode_steady_state(
     sol = solve(ss_prob, DynamicSS(integrator); kwargs...)
 
     # Check if the solver was successful
-    if SciMLBase.successful_retcode(sol)
+    if !SciMLBase.successful_retcode(sol)
         println("Solver failed with retcode: $(sol.retcode)")
         return
     end
