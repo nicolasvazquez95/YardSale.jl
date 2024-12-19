@@ -25,7 +25,7 @@ include("data_analysis/analysis_functions.jl")
 # Utils
 export get_kappa_beta
 # ODE
-export dxdt_net!, solve_ode_net, solve_ode_net_steady_state
+export dxdt_net!, solve_ode_net, solve_ode_steady_state
 
 # Data analysis
 export rescale_t
