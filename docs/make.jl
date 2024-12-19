@@ -11,6 +11,9 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "API" => "api.md",
+        "Tutorials" => [
+            "ODE systems" => "tutorials/ode_systems/ode_systems.md",
+        ]
     ],
     checkdocs = :none,
 )

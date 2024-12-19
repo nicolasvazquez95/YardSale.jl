@@ -2,7 +2,7 @@
 
 julia_version = "1.11.2"
 manifest_format = "2.0"
-project_hash = "ffd8e448626089f23018d1411a18d65b97f8768a"
+project_hash = "566bb7685306e572b448155c2d4e42c3db81153c"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "72af59f5b8f09faee36b4ec48e014a79210f2f4f"
@@ -2616,7 +2616,7 @@ version = "1.5.0+1"
 
 [[deps.YardSale]]
 deps = ["DifferentialEquations", "Distributions", "DocumenterTools", "Graphs", "JuliaFormatter", "Random", "SafeTestsets", "Statistics"]
-git-tree-sha1 = "f689be0f2b2032346b9342321750c43d9d520d1c"
+git-tree-sha1 = "53eeec7a292ebdb4f6b68ee0d841b88a14d2d3f8"
 repo-rev = "master"
 repo-url = ".."
 uuid = "761bf6a0-a09d-4884-b565-c7f10af2b317"
