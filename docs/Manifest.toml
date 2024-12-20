@@ -2018,7 +2018,7 @@ version = "0.2.0"
 
 [[deps.YardSale]]
 deps = ["DifferentialEquations", "Distributions", "DocumenterTools", "Graphs", "JuliaFormatter", "Random", "SafeTestsets", "Statistics"]
-path = ".."
+path = "C:\\Users\\nicol\\.julia\\dev\\YardSale"
 uuid = "761bf6a0-a09d-4884-b565-c7f10af2b317"
 version = "1.0.0-DEV"
 
