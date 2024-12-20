@@ -99,7 +99,7 @@ function ηij(wi::Real, wj::Real, zeta_W::Real)
 end
 
 """
-    EYSM_redistribution(wi::Real, W_N::Real, chif_N::Real)
+    EYSM_base_redistribution(wi::Real, W_N::Real, chif_N::Real)
 Calculates the redistribution term in the EYSM model for an agent i with wealth wi.
 # Arguments
     wi::Real: Wealth of agent i.
@@ -116,4 +116,4 @@ Monte Carlo simulation.
 # Returns
     redist::Real: Redistribution term for agent i.
 """
-EYSM_redistribution(wi::Real, W_N::Real, chif_N::Real) = chif_N * (W_N - wi)
+EYSM_base_redistribution(wi::Real, W_N::Real, chif_N::Real) = chif_N * (W_N - wi)

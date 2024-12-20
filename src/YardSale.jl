@@ -19,16 +19,20 @@ include("utils/mc_auxiliary_functions.jl")
 # ODE
 include("ode/ode_solvers.jl")
 
+# MC
+include("mc/mc_simulator.jl")
+
 # Data analysis
 include("data_analysis/analysis_functions.jl")
 
 # Exported functions
 # Utils
 export get_kappa_beta
-export mc_set_initial_conditions
+export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution
 # ODE
-export dxdt_net!, solve_ode_net, solve_ode_steady_state
-
+export dxdt_net!, solve_ode_net, solve_ode_net_SS
+# MC
+export EYSM_base_full
 # Data analysis
 export rescale_t
 

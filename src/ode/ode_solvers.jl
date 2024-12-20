@@ -51,7 +51,7 @@ end
 # Solve ODE
 """
     solve_ode_net(g, tspan, integrator, interaction_mode, taxation_mode, T, seed; kwargs...)
-Solve the ODE for the network model.
+Solves the ODE for the network model.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
     tspan::Tuple{Float64, Float64}: Tuple with initial and final time.
@@ -69,18 +69,18 @@ Solve the ODE for the network model.
 # Details
 This function solves the ODE for the network model. It calculates the kappa and beta
 parameters, sets the initial conditions, and solves the ODE. It returns the solution in
-the standard DifferentialEquations.jl format.
+the standard `DifferentialEquations.jl` format.
 A brief description of the ODE approximation model can be found in the `dxdt_net!` function.
-The function uses the DifferentialEquations.jl package to solve the ODE.
+The function uses the `DifferentialEquations.jl` package to solve the ODE.
 All the parameters for the solver can be passed as keyword arguments.
 
 The initial conditions can be set to "noisy", "random", "uniform", or a custom vector.
-- "noisy": Initial conditions are set to a random value around 1/N.
-`x = (1/N) * (1 + ϵ)` where `ϵ` is white noise with μ=0 and σ=0.01.
-- "random": Initial conditions are set to a random value, normalized to sum to 1.
-- "uniform": Initial conditions are set to 1/N.
-- "custom": Initial conditions are set to a custom vector. The vector must sum to 1.
-Also, x_i must be positive for all i.
+- `"noisy"`: Initial conditions are set to a random value around 1/N.
+``x = (1/N) * (1 + \\epsilon)`` where `ϵ` is white noise with μ=0 and σ=0.01.
+- `"random"`: Initial conditions are set to a random value, normalized to sum to 1.
+- `"uniform"`: Initial conditions are set to 1/N.
+- `"custom"`: Initial conditions are set to a custom vector. The vector must sum to 1.
+Also, ``x_i`` must be positive for all ``i``.
 
 # Returns
     sol::ODESolution: Solution of the ODE.
@@ -185,9 +185,9 @@ function solve_ode_net(
 end
 
 """
-    solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed;
+    solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed;
     initial_conditions="noisy",integrator=Tsit5(), kwargs...)
-Solve the ODE for the network model using a steady state solver.
+Solves the ODE for the network model using a steady state solver.
 # Arguments
     g::SimpleGraph{<:Integer}: Graph.
     interaction_mode::String: Interaction mode.
@@ -229,7 +229,7 @@ sol3 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed;
                             )
 ```
 """
-function solve_ode_steady_state(
+function solve_ode_net_SS(
     g::SimpleGraph{<:Integer},
     interaction_mode::String,
     taxation_mode::String,

@@ -155,7 +155,7 @@ display(p)
 
 # 2. Wealth of the richest agent as a function of the temperature (order parameter)
 
-Next, we'd like to see the phase transition looking at the plot of the wealth of the richest agent ``x_1`` as a function of the temperature ``T``. We must run the simulation at different temperatures, record the wealth of the richest agent at the end of the simulations. We'll then plot the wealth of the richest agent as a function of the temperature. Notice that the simulations have an transient period, so we must run the simulations for a long enough time to ensure that the system has reached the steady state. For our purposes, a ``t_{\text{max}} = 10^7`` should be enough. In any case, as we're not interested in intermediate times, we'll use a different solver, provided by the `DifferentialEquations.jl` package, which can search for the steady state of the system. That is what the `solve_ode_steady_state` function does.
+Next, we'd like to see the phase transition looking at the plot of the wealth of the richest agent ``x_1`` as a function of the temperature ``T``. We must run the simulation at different temperatures, record the wealth of the richest agent at the end of the simulations. We'll then plot the wealth of the richest agent as a function of the temperature. Notice that the simulations have an transient period, so we must run the simulations for a long enough time to ensure that the system has reached the steady state. For our purposes, a ``t_{\text{max}} = 10^7`` should be enough. In any case, as we're not interested in intermediate times, we'll use a different solver, provided by the `DifferentialEquations.jl` package, which can search for the steady state of the system. That is what the `solve_ode_net_SS` function does.
 
 We must increase the default tolerance of the integrator, because the system has critical behavior near the phase transition. We'll set the tolerante to ``10^{-15}``.
 
@@ -181,7 +181,7 @@ seed = 42
 x1_T = zeros(length(temperatures))
 # Solve the system for different temperatures
 for (i,T) in enumerate(temperatures)
-    sol = solve_ode_steady_state(
+    sol = solve_ode_net_SS(
         g,
         interaction_mode,
         taxation_mode,
