@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>ODE systems · YardSale</title><meta name="title" content="ODE systems · YardSale"/><meta property="og:title" content="ODE systems · YardSale"/><meta property="twitter:title" content="ODE systems · YardSale"/><meta name="description" content="Documentation for YardSale."/><meta property="og:description" content="Documentation for YardSale."/><meta property="twitter:description" content="Documentation for YardSale."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">YardSale</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../api/">API</a></li><li><span class="tocitem">Tutorials</span><ul><li class="is-active"><a class="tocitem" href>ODE systems</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Description-of-the-model"><span>Description of the model</span></a></li><li class="toplevel"><a class="tocitem" href="#1.-A-first-look-at-the-model"><span>1. A first look at the model</span></a></li><li class="toplevel"><a class="tocitem" href="#2.-Wealth-of-the-richest-agent-as-a-function-of-the-temperature-(order-parameter)"><span>2. Wealth of the richest agent as a function of the temperature (order parameter)</span></a></li></ul></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>ODE systems</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>ODE systems</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/nicolasvazquez95/YardSale.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/nicolasvazquez95/YardSale.jl/blob/master/docs/src/tutorials/ode_systems/ode_systems.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Import-necessary-packages"><a class="docs-heading-anchor" href="#Import-necessary-packages">Import necessary packages</a><a id="Import-necessary-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Import-necessary-packages" title="Permalink"></a></h1><pre><code class="language-julia hljs">using DifferentialEquations, Graphs
+using YardSale
+using Plots, LaTeXStrings, ColorSchemes</code></pre><h1 id="Description-of-the-model"><a class="docs-heading-anchor" href="#Description-of-the-model">Description of the model</a><a id="Description-of-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#Description-of-the-model" title="Permalink"></a></h1><p>Here we&#39;re going to use the functionalities of the ODE solver implemented in <code>YardSale.jl</code>. These are simple functions that wrap the <code>DifferentialEquations.jl</code> package to solve the ODE systems we&#39;re interested in. By wrapping, we are allowed to explore efficiently the parameters space.</p><p>The models we&#39;re going to explore belong to a wider class of models called <em>Asset Exchange Models</em>. These are models inspired in the statistical physics of interacting particles. The main idea is that agents exchange assets in a network, just like particles exchange energy in a physical system. The dynamics of the system is given by the exchange rules, which usually involve binary transactions. For a review of these models, see for example <em>Greenberg, M., Gao, H.O. Twenty-five years of random asset exchange modeling. Eur. Phys. J. B 97, 69 (2024) <a href="https://doi.org/10.1140/epjb/s10051-024-00695-3">DOI</a>.</em></p><p>Here, we&#39;re studying specifically and ODE approximation of one of these models, called the <em>&quot;Extended Yard-Sale Model&quot;</em> (EYSM), published in <em>Boghosian et al. (2017). Physica A, 476, 15-42 <a href="https://doi.org/10.1016/j.physa.2017.01.071">DOI</a>.</em> For details on the derivation of the equations please refer to our original paper.</p><p>Given a network <span>$a$</span>, the model is defined by the following set of ODEs:</p><p class="math-container">\[\dot{x}_i = \frac{T}{N} \bigg(-\beta_i x_i+\frac{1}{N}\sum_j \beta_j x_j\bigg) + \sum_j\kappa_{ij}(x_i-x_j\min(x_i,x_j)\]</p><p>where <span>$x_i$</span> represents the (expected) relative wealth of agent <span>$i$</span>, and <span>$T$</span> represents the temperature. The parameters <span>$\beta_i$</span> and <span>$\kappa_{ij}$</span> are parameters which contain information about the network structure of <span>$a$</span>, and the way in which agents get taxed and interact with each other, respectively.</p><p>As described in the original paper, the EYSM exhibits a second-order phase transition as a function of the temperature <span>$T$</span> when the network is a complete graph. This transition is characterized by the emergence of an oligarchy at low temperatures, where a few agents accumulate most of the wealth. At high temperatures, the wealth is more evenly distributed among the agents. The transition is characterized by the order parameter <span>$x_1$</span> (the wealth of the richest agent) as a function of the temperature <span>$T$</span>. In the thermodynamic limit, the order parameter behaves as</p><p class="math-container">\[x_1(T) = \begin{cases}
+        1 - T &amp; \text{if } T \leq 1 \\
+        0 &amp; \text{if } T &gt; 1\end{cases}\]</p><p>In this notebook, we&#39;re going to reproduce the phase transition of the EYSM in a complete graph, using the implementation of the ODE solver in <code>YardSale.jl</code>.</p><h1 id="1.-A-first-look-at-the-model"><a class="docs-heading-anchor" href="#1.-A-first-look-at-the-model">1. A first look at the model</a><a id="1.-A-first-look-at-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#1.-A-first-look-at-the-model" title="Permalink"></a></h1><p>Let&#39;s study the time evolution of the wealth distribution in the original EYSM. We&#39;ll set a system of few agents, and we&#39;ll plot the wealth of all agents as a function of time.</p><pre><code class="language-julia hljs"># Number of nodes
+N = 16
+# A complete graph with N nodes (Graphs.jl)
+g = complete_graph(N)
+# Interaction and taxation modes
+interaction_mode = &quot;A&quot;
+taxation_mode = &quot;A&quot;
+# Temperature
+T = 1.0
+# Time span
+tspan = (0.0, 30000)
+dt = 10
+# Seed
+seed = 42
+# Initial conditions
+initial_conditions = &quot;noisy&quot; # Defaul, but you can also use &quot;random&quot;, &quot;custom&quot;, or &quot;uniform&quot;
+;</code></pre><pre><code class="language-julia hljs"># Solve the system
+sol = solve_ode_net(
+    g,
+    tspan,
+    interaction_mode,
+    taxation_mode,
+    T,
+    seed;
+    integrator = Tsit5(),
+    initial_conditions = initial_conditions,
+    saveat = dt
+)
+;</code></pre><pre><code class="language-julia hljs"># Get the time series of the state variables, sorted by final state
+x_t = hcat(sol.u...)&#39;[:, sortperm(sol.u[end])]</code></pre><pre><code class="nohighlight hljs">3001×16 Matrix{Float64}:
+ 0.0611785  0.0615817  0.0619628  …  0.0630102  0.0630252  0.0634045
+ 0.0611742  0.0615783  0.0619606     0.0630128  0.0630278  0.0634091
+ 0.0611699  0.0615749  0.0619584     0.0630154  0.0630305  0.0634137
+ 0.0611656  0.0615715  0.0619563     0.063018   0.0630332  0.0634184
+ 0.0611612  0.0615681  0.0619541     0.0630206  0.0630359  0.063423
+ 0.0611569  0.0615646  0.0619519  …  0.0630232  0.0630386  0.0634277
+ 0.0611526  0.0615612  0.0619497     0.0630258  0.0630413  0.0634324
+ 0.0611482  0.0615577  0.0619475     0.0630285  0.063044   0.0634371
+ 0.0611438  0.0615543  0.0619452     0.0630311  0.0630467  0.0634418
+ 0.0611395  0.0615508  0.061943      0.0630338  0.0630495  0.0634466
+ 0.0611351  0.0615473  0.0619408  …  0.0630365  0.0630522  0.0634513
+ 0.0611307  0.0615438  0.0619385     0.0630392  0.063055   0.0634561
+ 0.0611263  0.0615403  0.0619363     0.0630419  0.0630578  0.063461
+ ⋮                                ⋱                        ⋮
+ 0.0585937  0.0585937  0.0585937     0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937  …  0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937  …  0.058595   0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.0585949  0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.0585949  0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.0585949  0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937     0.0585949  0.0585952  0.119949
+ 0.0585937  0.0585937  0.0585937  …  0.0585949  0.0585951  0.119949</code></pre><pre><code class="language-julia hljs"># Rescale the time units to MC steps
+t_mcs = rescale_t(sol.t,N)
+;</code></pre><pre><code class="language-julia hljs"># Make the paper plot
+p = plot(
+    ylabel = L&quot;x_i&quot;,
+    xlabel = L&quot;t&quot;*&quot; [&quot;*L&quot;10^{4}\;\mathrm{MC\;steps}]&quot;,
+    fontfamily = &quot;Computer Modern&quot;,
+    legend_title = &quot;ODE - Wealth distribution&quot;,
+    xguidefontsize = 17,
+    yguidefontsize = 17,
+    legendfontsize = 15,
+    legendtitlefontsize = 16,
+    xtickfontsize = 17,
+    ytickfontsize = 17,
+    palette = :tol_nightfall,
+    size=(640,480),
+    fmt=:png,
+    ylims = (:auto, 0.13),
+    xlims = (0,:auto),
+    minorticks = true
+)
+
+for i in 1:N
+    plot!(t_mcs ./ 1e4, x_t[:, i], label = &quot;&quot;, lw = 2)
+end
+
+display(p)</code></pre><p><img src="../output_8_0.png" alt="Time evolution of the system"/></p><h1 id="2.-Wealth-of-the-richest-agent-as-a-function-of-the-temperature-(order-parameter)"><a class="docs-heading-anchor" href="#2.-Wealth-of-the-richest-agent-as-a-function-of-the-temperature-(order-parameter)">2. Wealth of the richest agent as a function of the temperature (order parameter)</a><a id="2.-Wealth-of-the-richest-agent-as-a-function-of-the-temperature-(order-parameter)-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Wealth-of-the-richest-agent-as-a-function-of-the-temperature-(order-parameter)" title="Permalink"></a></h1><p>Next, we&#39;d like to see the phase transition looking at the plot of the wealth of the richest agent <span>$x_1$</span> as a function of the temperature <span>$T$</span>. We must run the simulation at different temperatures, record the wealth of the richest agent at the end of the simulations. We&#39;ll then plot the wealth of the richest agent as a function of the temperature. Notice that the simulations have an transient period, so we must run the simulations for a long enough time to ensure that the system has reached the steady state. For our purposes, a <span>$t_{\text{max}} = 10^7$</span> should be enough. In any case, as we&#39;re not interested in intermediate times, we&#39;ll use a different solver, provided by the <code>DifferentialEquations.jl</code> package, which can search for the steady state of the system. That is what the <code>solve_ode_steady_state</code> function does.</p><p>We must increase the default tolerance of the integrator, because the system has critical behavior near the phase transition. We&#39;ll set the tolerante to <span>$10^{-15}$</span>.</p><pre><code class="language-julia hljs"># The system has to be big enough to discard finite size effects
+N = 128
+g = complete_graph(N)
+# Interacion and taxation modes
+interaction_mode = &quot;A&quot;
+taxation_mode = &quot;B&quot;
+# Time span
+tspan = (0.0, 1e7)
+# Different temperatures
+temperatures = 0.0:0.05:2.0
+# Seed
+seed = 42</code></pre><pre><code class="nohighlight hljs">42</code></pre><pre><code class="language-julia hljs"># Run simulations
+x1_T = zeros(length(temperatures))
+# Solve the system for different temperatures
+for (i,T) in enumerate(temperatures)
+    sol = solve_ode_steady_state(
+        g,
+        interaction_mode,
+        taxation_mode,
+        T,
+        seed;
+        integrator = Tsit5(),
+        initial_conditions = initial_conditions,
+        reltol=1e-15,
+        abstol=1e-15
+    )
+    x1_T[i] = maximum(sol.u)
+end</code></pre><pre><code class="language-julia hljs">p2 = plot(
+    ylabel = L&quot;x_1&quot;,
+    xlabel = L&quot;T&quot;,
+    fontfamily = &quot;Computer Modern&quot;,
+    legend_title = &quot;ODE: &quot; * L&quot;x_1&quot; * &quot; vs &quot; * L&quot;T&quot;,
+    xguidefontsize = 17,
+    yguidefontsize = 17,
+    legendfontsize = 15,
+    legendtitlefontsize = 16,
+    xtickfontsize = 17,
+    ytickfontsize = 17,
+    palette = :julia,
+    size=(640,480),
+    fmt=:png,
+    minorticks = true
+)
+
+p = scatter!(
+    p2,
+    temperatures,
+    x1_T,
+    label = L&quot;N=&quot;*&quot;$N&quot;,
+    ms = 5,
+    color = 1
+    )
+
+p2 = plot!(p2,temperatures[1:21], x1_T[1:21], label=L&quot;x_1 = 1 - T&quot;, lw = 2,ls=:dot,color=2)
+p2 = hline!(p2,[1/N],label=L&quot;x_1 = 1/N&quot;,lw=2,ls=:dot,color=3)</code></pre><p><img src="../output_12_0.png" alt="x_1 vs. T"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../../api/">« API</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Friday 20 December 2024 03:39">Friday 20 December 2024</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
