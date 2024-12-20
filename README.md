@@ -6,6 +6,8 @@
 
 `YardSale.jl` is a Julia package developed to simulate the dynamics of wealth distribution models using Monte Carlo simulations and ODE systems.
 
+Documentation is under construction and can be found [here](https://nicolasvazquez95.github.io/YardSale.jl/dev).
+
 ## Installation
 
 The package is not yet registered in the Julia General Registry. To install it, you can use the following command:
