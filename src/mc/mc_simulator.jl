@@ -104,13 +104,13 @@ function EYSM_base_full(
             end
             # Calculate the wealth exchange
             wi, wj = w[i], w[j]
-            Δw = Δw(i, j, wi, wj, f)
+            δw = Δw(i, j, wi, wj, f)
             # Calculate the redistribution terms
             redist_i = EYSM_base_redistribution(wi, W_N, chif_N)
             redist_j = EYSM_base_redistribution(wj, W_N, chif_N)
             # Update the wealth
-            w[i] = wi + Δw + redist_i
-            w[j] = wj - Δw + redist_j
+            w[i] = wi + δw + redist_i
+            w[j] = wj - δw + redist_j
         end
         # Save the wealth distribution
         if t % save_every == 0
