@@ -14,6 +14,7 @@ using Statistics
 # Include statements
 # Utils
 include("utils/kappa_beta.jl")
+include("utils/mc_auxiliary_functions.jl")
 
 # ODE
 include("ode/ode_solvers.jl")
@@ -24,6 +25,7 @@ include("data_analysis/analysis_functions.jl")
 # Exported functions
 # Utils
 export get_kappa_beta
+export mc_set_initial_conditions
 # ODE
 export dxdt_net!, solve_ode_net, solve_ode_steady_state
 
