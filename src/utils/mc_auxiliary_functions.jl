@@ -1,5 +1,21 @@
 # mc_auxiliary_functions.jl
 # A set of functions to be used in the Monte Carlo simulations.
+"""
+    mc_set_initial_conditions(N::Integer, W_N::Real, initial_conditions::String,
+        w::Union{Nothing, Vector{<:Real}}=nothing)
+
+Set the initial conditions for the Monte Carlo simulation.
+
+# Arguments
+    N::Integer: Number of agents.
+    W_N::Real: Total wealth per agent.
+    initial_conditions::String: Initial condition. Options are "uniform", "random", "noisy"
+    and "custom".
+    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution. Only used if
+    initial_conditions="custom". Default is nothing.
+# Returns
+    w::Vector{Real}: Initial wealth distribution.
+"""
 function mc_set_initial_conditions(
     N::Integer,
     W_N::Real,
