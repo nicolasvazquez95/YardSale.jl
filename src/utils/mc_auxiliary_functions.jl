@@ -3,9 +3,7 @@
 """
     mc_set_initial_conditions(N::Integer, W_N::Real, initial_conditions::String,
         w::Union{Nothing, Vector{<:Real}}=nothing)
-
 Set the initial conditions for the Monte Carlo simulation.
-
 # Arguments
     N::Integer: Number of agents.
     W_N::Real: Total wealth per agent.
@@ -44,6 +42,10 @@ function mc_set_initial_conditions(
         end
         if length(w) != N
             throw(ArgumentError("The length of w must be equal to N."))
+        end
+        # Every element of w must be non-negative
+        if any(w .< 0)
+            throw(ArgumentError("Every element of w must be non-negative."))
         end
         # Throw a warning if the sum of w is too different from W
         if (sum(w) ≈ W) == false

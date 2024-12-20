@@ -28,26 +28,26 @@ whole time series of the wealth distribution.
 This function tries to reproduce as closely as possible the results of the original EYSM
 proposed by Boghosian et al. in 2017. The model has two parameters, and it is defined for
 a fully connected network of ``N`` agentes, each one with a wealth ``w_i``, such that the
-total wealth ``\sum_i w_i = W`` is conserved.
+total wealth ``\\sum_i w_i = W`` is conserved.
 
 The interaction rule is defined as follows:
 1. Randomly select two agents i and j.
 2. The amount of wealth exchanged is given by a fraction of the minimum between
 the wealths of the two agents.
 ```math
-\Delta w = f\min(w_i, w_j)\eta_{ij}
+\\Delta w = f\\min(w_i, w_j)\\eta_{ij}
 ```
-where ``eta_{ij}`` is a stochastic variable with values -1 or 1. The expected value of
-``\eta_{ij}`` is biased towards the richest agent, and it is given by
+where ``\\eta_{ij}`` is a stochastic variable with values -1 or 1. The expected value of
+``\\eta_{ij}`` is biased towards the richest agent, and it is given by
 ```math
-\langle\eta_{ij}\rangle = \zeta \frac{w_i - w_j}{W}
+\\langle\\eta_{ij}\\rangle = \\zeta \\frac{w_i - w_j}{W}
 ```
 3. The wealth of the agents is updated as follows:
 ```math
-w_i \leftarrow w_i - \Delta w + \chi (\frac{W}{N} - w_i)
-w_j \leftarrow w_j + \Delta w + \chi (\frac{W}{N} - w_j)
+w_i \\leftarrow w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
+w_j \\leftarrow w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
 ````
-where ``\chi`` represents the taxation and redistribution rate.
+where ``\\chi`` represents the taxation and redistribution rate.
 
 In the original paper, the authors work analitically, using a Fokker-Planck approach. In this
 implementation, we use a Monte Carlo simulation to obtain similar results.

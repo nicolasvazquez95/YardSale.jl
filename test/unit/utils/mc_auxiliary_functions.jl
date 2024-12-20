@@ -30,12 +30,20 @@ W = W_N * N
     @test sum(w) ≈ W
 
     # 2. It should not throw a warning
-    gauss = Normal(0.0, W_N)
-    noise = rand(gauss, N)
-    custom_w = fill(W_N, N) + typeof(W_N).(noise)
+    custom_w = rand(typeof(W_N),N)
     custom_w *= W/sum(custom_w)
     @test_nowarn begin
         w = mc_set_initial_conditions(N, W_N, "custom", custom_w)
     end
     @test sum(w) ≈ W
+
+    # 3. Errors
+    # 3.1. Invalid initial condition
+    @test_throws ArgumentError mc_set_initial_conditions(N, W_N, "invalid")
+    # 3.2. Custom initial conditions without w
+    @test_throws ArgumentError mc_set_initial_conditions(N, W_N, "custom")
+    # 3.3. Custom initial conditions with wrong length of w
+    @test_throws ArgumentError mc_set_initial_conditions(N, W_N, "custom", fill(0.5, N+1))
+    # 3.4. Custom initial conditions with negative elements
+    @test_throws ArgumentError mc_set_initial_conditions(N, W_N, "custom", fill(-0.5, N))
 end
