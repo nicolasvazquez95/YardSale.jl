@@ -97,8 +97,9 @@ function EYSM_base_full(
         for exch in 1:N
             # Select two agents
             i, j = rand(1:N, 2)
+            # Avoid self-exchanges
             while i == j
-                i, j = rand(1:N, 2)
+                j = rand(1:N)
             end
             # Calculate the wealth exchange
             wi, wj = w[i], w[j]
