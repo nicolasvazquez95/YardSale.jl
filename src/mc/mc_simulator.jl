@@ -1,8 +1,6 @@
 """
-    EYSM_base_full(N::Integer, W_N::Real, chi::Real, zeta::Real, f::Real, steps::Integer,
-    seed::Integer; w::Union{Nothing, Vector{<:Real}}=nothing,
-    initial_conditions::String="uniform",
-    save_every::Union{Nothing, Integer}=nothing)
+    EYSM_base_full(N, W_N, chi, zeta, f, steps,seed; w=nothing,initial_conditions="uniform",
+    save_every=nothing)
 Runs a Monte Carlo simulation of the Extended Yard-Sale Model and returns the
 whole time series of the wealth distribution.
 # Arguments
@@ -83,7 +81,7 @@ function EYSM_base_full(
 
     # Initialize the time series
     ## Check the save_every argument
-    if save_every == nothing
+    if isnothing(save_every)
         save_every = N
     end
     ## Initialize the time series
@@ -104,7 +102,7 @@ function EYSM_base_full(
             end
             # Calculate the wealth exchange
             wi, wj = w[i], w[j]
-            δw = Δw(f, wi, wj)
+            δw = Δw(f, wi, wj, zeta_W)
             # Calculate the redistribution terms
             redist_i = EYSM_base_redistribution(wi, W_N, chif_N)
             redist_j = EYSM_base_redistribution(wj, W_N, chif_N)

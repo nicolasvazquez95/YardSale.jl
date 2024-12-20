@@ -1,8 +1,7 @@
 # mc_auxiliary_functions.jl
 # A set of functions to be used in the Monte Carlo simulations.
 """
-    mc_set_initial_conditions(N::Integer, W_N::Real, initial_conditions::String,
-        w::Union{Nothing, Vector{<:Real}}=nothing)
+    mc_set_initial_conditions(N, W_N, initial_conditions,w=nothing)
 Set the initial conditions for the Monte Carlo simulation.
 # Arguments
     N::Integer: Number of agents.
@@ -58,18 +57,17 @@ function mc_set_initial_conditions(
 end
 
 """
-    Δw(i, j, wi, wj, f)
+    Δw(f, wi, wj)
 Calculate the amount of wealth exchanged between agents i and j in the EYSM model.
 # Arguments
-    i::Integer: Index of agent i.
-    j::Integer: Index of agent j.
+    f::Real: Fraction of the minimum wealth exchanged between agents i and j.
     wi::Real: Wealth of agent i.
     wj::Real: Wealth of agent j.
-    f::Real: Fraction of the minimum wealth exchanged between agents i and j.
+
 # Returns
     Δw::Real: Amount of wealth exchanged between agents i and j.
 """
-Δw(f::Real, wi::Real, wj::Real) = f * min(wi,wj) * ηij(wi, wj, zeta_W)
+Δw(f::Real, wi::Real, wj::Real,zeta_W::Real) = f * min(wi,wj) * ηij(wi, wj, zeta_W)
 
 """
     ηij(wi, wj, zeta_W)
@@ -99,7 +97,7 @@ function ηij(wi::Real, wj::Real, zeta_W::Real)
 end
 
 """
-    EYSM_base_redistribution(wi::Real, W_N::Real, chif_N::Real)
+    EYSM_base_redistribution(wi, W_N, chif_N)
 Calculates the redistribution term in the EYSM model for an agent i with wealth wi.
 # Arguments
     wi::Real: Wealth of agent i.
