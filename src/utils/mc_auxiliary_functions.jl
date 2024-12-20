@@ -69,7 +69,7 @@ Calculate the amount of wealth exchanged between agents i and j in the EYSM mode
 # Returns
     Δw::Real: Amount of wealth exchanged between agents i and j.
 """
-Δw(i::Integer, j::Integer, wi::Real, wj::Real) = f * min(wi,wj) * ηij(wi, wj, zeta_W)
+Δw(f::Real, wi::Real, wj::Real) = f * min(wi,wj) * ηij(wi, wj, zeta_W)
 
 """
     ηij(wi, wj, zeta_W)

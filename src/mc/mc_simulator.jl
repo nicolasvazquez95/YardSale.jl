@@ -104,7 +104,7 @@ function EYSM_base_full(
             end
             # Calculate the wealth exchange
             wi, wj = w[i], w[j]
-            δw = Δw(i, j, wi, wj, f)
+            δw = Δw(f, wi, wj)
             # Calculate the redistribution terms
             redist_i = EYSM_base_redistribution(wi, W_N, chif_N)
             redist_j = EYSM_base_redistribution(wj, W_N, chif_N)
