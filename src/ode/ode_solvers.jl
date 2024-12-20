@@ -222,9 +222,9 @@ g = erdos_renyi(100, 0.1, seed=42)
 interaction_mode, taxation_mode = "A","A"
 T = 1.0
 seed = 42
-sol1 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed)
-sol2 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed; integrator=RK4())
-sol3 = solve_ode_steady_state(g, interaction_mode, taxation_mode, T, seed;
+sol1 = solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed)
+sol2 = solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed; integrator=RK4())
+sol3 = solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed;
                             integrator=RK4(),reltol=1e-6, abstol=1e-6
                             )
 ```

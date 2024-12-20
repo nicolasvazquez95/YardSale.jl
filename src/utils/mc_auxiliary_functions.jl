@@ -106,13 +106,14 @@ Calculates the redistribution term in the EYSM model for an agent i with wealth 
     W_N::Real: Total wealth per agent.
     chif_N::Real: Taxation and redistribution rate.
 # Details
-In the EYSM model, the redistribution term of the wealth update of agent i is given by
+In the EYSM model, the redistribution term of the wealth update of agent i ``is`` given by
 ```math
 \\frac{\\chi f}{N}(\\frac{W}{N} - w_i)
 ```
-where f is the fraction of the minimum wealth exchanged between agents i and j, and is playing
-the role of the Δt term in the Fokker-Planck approach, as the temporal unit of time of the
-Monte Carlo simulation.
+where f is the fraction of the minimum wealth exchanged between agents, and ``f``
+is playing the role of the Δt term in the Fokker-Planck approach, as the
+temporal unit of time of the Monte Carlo simulation. ``chi`` represents the taxation and
+redistribution rate and N is the number of agents.
 # Returns
     redist::Real: Redistribution term for agent i.
 """
