@@ -1,5 +1,5 @@
 """
-    EYSM_FCN_full(N::Integer, W_N::Real, chi::Real, zeta::Real, f::Real, steps::Integer,
+    EYSM_base_full(N::Integer, W_N::Real, chi::Real, zeta::Real, f::Real, steps::Integer,
     seed::Integer; w::Union{Nothing, Vector{<:Real}}=nothing,
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing)
@@ -53,9 +53,13 @@ In the original paper, the authors work analitically, using a Fokker-Planck appr
 implementation, we use a Monte Carlo simulation to obtain similar results.
 
 # Examples
-    TODO
+```julia
+w_t_1 = EYSM_base_full(1000, 1, 0.1, 0.1, 1, 1000, 42)
+w_t_2 = EYSM_base_full(64, 1.0f0, 0.1f0, 0.1f0, 1, 1000, 42, initial_conditions="random")
+w_t_3 = EYSM_base_full(32, 1, 0.1, 0.1, 1, 1000, 42, initial_conditions="custom", w=rand(1000))
+```
 """
-function EYSM_FCN_full(
+function EYSM_base_full(
     N::Integer,
     W_N::Real,
     chi::Real,
@@ -67,11 +71,59 @@ function EYSM_FCN_full(
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing
 )
-
     # Set the seed
     Random.seed!(seed)
+    # Initialize wealth distribution
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    # Calculate the total wealth
+    W = sum(w)
+    # Calculate some useful constants
+    chif_N = chi * f / N
+    zeta_W = zeta / W
 
-    # 20/12 TODO: We're stuck with the mc_set_initial_conditions function. Implement and test.
-    # w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
-    # Then, proceed with the rest of the function.
+    # Initialize the time series
+    ## Check the save_every argument
+    if save_every == nothing
+        save_every = N
+    end
+    ## Initialize the time series
+    ### Each row of w_t is a checkpoint
+    w_t = zeros(typeof(w), 1 +(steps ÷ save_every), N)
+    ## Save the initial condition
+    w_t[1, :] .= w
+    # Index to iterate over w_t
+    idx = 2
+
+    # Simulation loop
+    for t in 1:steps
+        for exch in 1:N
+            # Select two agents
+            i, j = rand(1:N, 2)
+            while i == j
+                i, j = rand(1:N, 2)
+            end
+            # Calculate the wealth exchange
+            wi, wj = w[i], w[j]
+            Δw = Δw(i, j, wi, wj, f)
+            # Calculate the redistribution terms
+            redist_i = EYSM_redistribution(wi, W_N, chif_N)
+            redist_j = EYSM_redistribution(wj, W_N, chif_N)
+            # Update the wealth
+            w[i] = wi + Δw + redist_i
+            w[j] = wj - Δw + redist_j
+        end
+        # Save the wealth distribution
+        if t % save_every == 0
+            w_t[idx, :] .= w
+            idx += 1
+            # Check for negative wealth
+            if any(w .< 0)
+                throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                return w_t
+            end
+            # Re normalize the wealth
+            w .*= W/sum(w)
+        end
+    end
+    return w_t
 end
