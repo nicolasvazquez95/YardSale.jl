@@ -88,7 +88,7 @@ function EYSM_base_full(
     end
     ## Initialize the time series
     ### Each row of w_t is a checkpoint
-    w_t = zeros(typeof(w), 1 +(steps ÷ save_every), N)
+    w_t = zeros(typeof(W_N), 1 +(steps ÷ save_every), N)
     ## Save the initial condition
     w_t[1, :] .= w
     # Index to iterate over w_t
