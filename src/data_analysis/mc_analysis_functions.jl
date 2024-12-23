@@ -9,4 +9,4 @@
 # Returns
     x1::AbstractVector: Richest node at each time step.
 """
-get_x1(x::AbstractMatrix, dims::Vararg{Integer}=2) = maximum(x, dims=dims)
+get_x1(x::AbstractArray, dims::Vararg{Integer}=2) = maximum(x, dims=dims)
