@@ -10,7 +10,7 @@
 # Returns
     x1::AbstractVector: Richest node at each time step.
 """
-get_x1(x::AbstractMatrix, dims::Union{Integer, Tuple{Integer, Integer}}=2) = maximum(x, dims=dims)
+get_x1(x::AbstractMatrix, dims::Vararg{Int, N}=2) = maximum(x, dims=dims)
 
 """
     get_avg_x1(x::AbstractMatrix, start::Integer, dims::Union{Integer, Tuple{Integer, Integer}}=2)
