@@ -126,3 +126,54 @@ function EYSM_base_full(
     end
     return w_t
 end
+
+"""
+    EYSM_net_full(g::SimpleGraph,W_N, interaction_mode, taxation_mode, chi, zeta, f, steps,
+    seed; w=nothing,initial_conditions="uniform",save_every=nothing)
+Runs a Monte Carlo simulation of the Extender Yard-Sale model on an arbitrary network and
+returns the whole time series of the wealth distribution.
+
+"""
+function EYSM_net_full(
+    g::SimpleGraph{<:Integer},
+    W_N::Real,
+    interaction_mode::String,
+    taxation_mode::String,
+    chi::Real,
+    zeta::Real,
+    f::Real,
+    steps::Integer,
+    seed::Integer;
+    w::Union{Nothing, Vector{<:Real}}=nothing,
+    initial_conditions::String="uniform",
+    save_every::Union{Nothing, Integer}=nothing
+)
+    # Get data from the graph
+    N = nv(g)
+    # Set the seed
+    Random.seed!(seed)
+    # Initialize wealth distribution
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    # Calculate the total wealth
+    W = sum(w)
+    # Calculate some useful constants
+    chif_N = chi * f / N
+    zeta_W = zeta / W
+
+    # Initialize the time series
+    ## Check the save_every argument
+    if isnothing(save_every)
+        save_every = N
+    end
+    ## Initialize the time series
+    ### Each row of w_t is a checkpoint
+    w_t = zeros(typeof(W_N), 1 +(steps ÷ save_every), N)
+    ## Save the initial condition
+    w_t[1, :] .= w
+    # Index to iterate over w_t
+    idx = 2
+
+    # Simulation loop
+    # TODO
+    return w_t
+end
