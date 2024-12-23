@@ -10,5 +10,5 @@
     x1::AbstractArray: Richest node at each time step.
 """
 function get_x1(x::AbstractArray, dims::Vararg{Integer}=2)
-    return dropdims(maximum(x, dims=dims); dims=dims)
+    return maximum(x, dims=dims)
 end
