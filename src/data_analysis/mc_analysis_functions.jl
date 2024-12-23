@@ -24,7 +24,7 @@ get_x1(x::AbstractMatrix, dims::Union{Integer, Tuple{Integer, Integer}}=2) = max
     avg_x1::Float64: Time average of the richest node after a given time step.
     var_x1::Float64: Variance of the richest node after a given time step.
 """
-function get_avg_x1(x::AbstractMatrix, start::Integer, dims::Union{Integer, Tuple{Integer, Integer}}=2)
+function get_avg_x1(x::AbstractArray, start::Integer, dims::Union{Integer, Tuple{Integer, Integer}}=2)
     x1 = get_x1(x, dims)
     return mean(x1[start:end]), var(x1[start:end])
 end
