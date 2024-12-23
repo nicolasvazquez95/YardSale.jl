@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>EYSM Base · YardSale</title><meta name="title" content="EYSM Base · YardSale"/><meta property="og:title" content="EYSM Base · YardSale"/><meta property="twitter:title" content="EYSM Base · YardSale"/><meta name="description" content="Documentation for YardSale."/><meta property="og:description" content="Documentation for YardSale."/><meta property="twitter:description" content="Documentation for YardSale."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">YardSale</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../../ode_systems/ode_systems/">ODE systems</a></li><li><input class="collapse-toggle" id="menuitem-2-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2-2"><span class="docs-label">Monte Carlo</span><i class="docs-chevron"></i></label><ul class="collapsed"><li class="is-active"><a class="tocitem" href>EYSM Base</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Description-of-the-notebook"><span>Description of the notebook</span></a></li><li class="toplevel"><a class="tocitem" href="#1.-Time-evolution-of-the-wealth-distribution"><span>1. Time evolution of the wealth distribution</span></a></li><li class="toplevel"><a class="tocitem" href="#2.-Phase-transition-properties"><span>2. Phase transition properties</span></a></li></ul></li></ul></li></ul></li><li><span class="tocitem">References</span><ul><li><a class="tocitem" href="../../../references/ode/">ODE systems</a></li><li><a class="tocitem" href="../../../references/mc/">Monte Carlo</a></li><li><a class="tocitem" href="../../../references/utils/">Utils</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li><a class="is-disabled">Monte Carlo</a></li><li class="is-active"><a href>EYSM Base</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>EYSM Base</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/nicolasvazquez95/YardSale.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/nicolasvazquez95/YardSale.jl/blob/master/docs/src/tutorials/mc_eysm_base/mc_eysm_base.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Import-necessary-packages"><a class="docs-heading-anchor" href="#Import-necessary-packages">Import necessary packages</a><a id="Import-necessary-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Import-necessary-packages" title="Permalink"></a></h1><pre><code class="language-julia hljs">using YardSale
+using Plots, Measures, LaTeXStrings, ColorSchemes</code></pre><h1 id="Description-of-the-notebook"><a class="docs-heading-anchor" href="#Description-of-the-notebook">Description of the notebook</a><a id="Description-of-the-notebook-1"></a><a class="docs-heading-anchor-permalink" href="#Description-of-the-notebook" title="Permalink"></a></h1><p>In this notebook we&#39;ll explore the behavior of the Extended Yard-Sale Model (EYSM), simulating the (stochastic) evolution of an economical systems of <span>$N$</span> agents. These agents are characterized by their wealth <span>$w_i, \;i=1,...,N$</span>. The rules of the model have been described in the <code>ode_systems.ipynb</code> notebook.  Here, we add the stochasticity to the model, in the framework of Monte Carlo simulations. With this addition, we expect to see not only the phase transition of the model, but also the fluctuations around the critical point. </p><p>Remember that the exchange rule of the EYSM is given by:</p><p class="math-container">\[\Delta w_{ij} = \chi \Delta t \bigg(\frac{W}{N} - w_i\bigg) + \eta_{ij} \sqrt{\gamma \Delta t} \min(w_i,w_j),\]</p><p>where <span>$\chi$</span> is the redistribution rate, <span>$\sqrt{\gamma \Delta t}$</span> represents the fraction <span>$f$</span> of the wealth that is exchanged between agents <span>$i$</span> and <span>$j$</span> at each time step, and <span>$\eta_{ij}$</span> is a random number that can be <span>$\pm 1$</span>. This stochastic variable has the properties</p><p class="math-container">\[\langle \eta_{ij} \rangle = \zeta N \sqrt{\frac{\Delta t}{\gamma}} \frac{(w_i - w_j)}{W}, \qquad \langle \eta_{ij}^2 \rangle = 1.\]</p><p>The parameter <span>$\zeta$</span> represents the Wealth-Attained Advantage (WAA) parameter, which is a bias that favors the richer agent in the exchange. Finally, the wealth of the agents is updated as</p><p class="math-container">\[w_i \to w_i + \Delta w_{ij}, \qquad w_j \to w_j - \Delta w_{ij}.\]</p><p>In this notebook, we&#39;&#39;ll explore the behavior of the EYSM model using Monte Carlo simulations. We&#39;&#39;ll study the dynamics and the phase transition of the model measuring the order parameter and its fluctuations at the steady state.</p><h1 id="1.-Time-evolution-of-the-wealth-distribution"><a class="docs-heading-anchor" href="#1.-Time-evolution-of-the-wealth-distribution">1. Time evolution of the wealth distribution</a><a id="1.-Time-evolution-of-the-wealth-distribution-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Time-evolution-of-the-wealth-distribution" title="Permalink"></a></h1><p>For a small system, we can visualize the evolution of the wealth of each agent over time.</p><pre><code class="language-julia hljs"># Parameters of the system
+N = 16
+W_N = 1.0
+
+# Temperature of the system: χ/ζ
+chi = 1.0
+zeta = 1.0
+
+# The fraction of exchange determines in some way the intensity of the noise,
+# Larger values of f will speed up the system, but it will also make the noise
+# more intense, an the dynamics will be less smooth. 
+# I found that f &lt; 0.1 is a rule of thumb.
+f = 0.01
+
+# Steps to run the simulation
+steps = 10000 # MC steps
+# Seed
+seed = 42 # The answer to the ultimate question of life, the universe and everything
+
+# Optional
+save_every = 1 
+;</code></pre><pre><code class="language-julia hljs"># Run 
+@time w_t = EYSM_base_full(N, W_N, chi, zeta, f, steps, seed; save_every=save_every)
+
+# Sort the columns according to the final state
+w_t = w_t[:,sortperm(w_t[end,:])]</code></pre><pre><code class="nohighlight hljs">  0.026488 seconds (350.02 k allocations: 14.344 MiB)
+10001×16 Matrix{Float64}:
+ 1.0       1.0       1.0       1.0       …  1.0       1.0       1.0
+ 1.00988   1.00011   0.990101  1.01         0.990199  1.0       1.01979
+ 1.00988   0.999997  0.970359  0.989991     0.990195  0.999996  1.02948
+ 1.02985   0.980294  0.980077  0.999894     0.970505  0.989931  1.04963
+ 1.01964   0.970732  0.979959  0.999896     0.970441  0.989934  1.04964
+ 1.00953   1.00018   0.979958  1.02938   …  0.960755  0.999838  1.02978
+ 0.999528  0.981201  0.989694  1.02911      0.97039   1.01993   1.02015
+ 0.999133  0.971524  1.00831   1.02907      0.960703  1.0204    1.02003
+ 0.989324  0.99047   0.998984  1.03846      0.97033   1.03038   1.03996
+ 0.979914  0.990466  0.998689  1.02873      0.950995  1.04025   1.03979
+ 0.969973  0.990473  0.979881  1.01851   …  0.950961  1.0313    1.03885
+ 0.970002  0.98056   0.960972  1.00877      0.970246  1.04145   1.02892
+ 0.969923  0.970407  0.98012   1.00876      0.970233  1.07141   1.01859
+ ⋮                                       ⋱                      ⋮
+ 0.440844  0.552208  0.643806  0.75115      1.56723   1.76156   1.9168
+ 0.445601  0.547458  0.646276  0.743793  …  1.56723   1.73571   1.89882
+ 0.450387  0.559005  0.652935  0.751363     1.54405   1.74003   1.89271
+ 0.451083  0.582863  0.659337  0.73784      1.56042   1.74721   1.8839
+ 0.448141  0.582775  0.652858  0.730516     1.59655   1.74695   1.8786
+ 0.45294   0.571665  0.653567  0.736467     1.57927   1.76105   1.8678
+ 0.452921  0.555469  0.647222  0.757503  …  1.57921   1.75976   1.85909
+ 0.448712  0.555443  0.648287  0.757467     1.5646    1.78162   1.87482
+ 0.440498  0.561309  0.642063  0.757512     1.57233   1.78772   1.86648
+ 0.436412  0.555931  0.642407  0.757888     1.59429   1.76861   1.84066
+ 0.428482  0.567727  0.642484  0.76592      1.58645   1.77934   1.84088
+ 0.42847   0.579662  0.612112  0.765899  …  1.58641   1.77612   1.83163</code></pre><pre><code class="language-julia hljs">p1 = plot(
+    ylabel = L&quot;x_i&quot;,
+    xlabel = L&quot;t&quot;*&quot; [MC steps]&quot;,
+    fontfamily = &quot;Computer Modern&quot;,
+    legend_title = &quot;MC - Wealth distribution&quot;,
+    xguidefontsize = 17,
+    yguidefontsize = 17,
+    legendfontsize = 15,
+    legendtitlefontsize = 17,
+    xtickfontsize = 17,
+    ytickfontsize = 17,
+    palette = :tol_nightfall,
+    size=(640,480),
+    fmt=:png,
+    ylims = (0, 0.23),
+    xlims = (0,:auto),
+    minorticks = true,
+    right_margin = 8mm,
+    legend = :topright,
+)    
+
+for i in 1:N
+    plot!(p1,w_t[:,i]/N, label = &quot;&quot;, lw = 2)
+end
+
+display(p1)</code></pre><p><img src="../output_8_0.png" alt="MC time evolution"/></p><h1 id="2.-Phase-transition-properties"><a class="docs-heading-anchor" href="#2.-Phase-transition-properties">2. Phase transition properties</a><a id="2.-Phase-transition-properties-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Phase-transition-properties" title="Permalink"></a></h1><p>Now, we would like to study the phase transition of the model. For that, we need to make some statistics over a certain number of realizations of the model. Then we can calculate the order parameter and its fluctuations. In Julia, we can use the <code>Threads.@threads</code> macro to parallelize the independent simulations. This will speed up the calculations. Then the order parameter and its fluctuations can be calculated with the <code>Statistics.jl</code> package.</p><pre><code class="language-julia hljs">using ProgressMeter</code></pre><pre><code class="language-julia hljs"># Number of runs
+N = 64
+W_N = 1.0f0
+zeta = 1.0f0
+chi = 0.0f0:0.04f0:2.0f0
+steps = 30000 * N # MC steps: 30000 * 128 = 3.84e6
+seed = 42
+# Run
+sims = zeros(typeof(W_N), length(chi), (steps ÷ N) + 1, N)
+
+# Safe lock 
+lk = ReentrantLock()
+# ProgressMeter
+p = Progress(length(chi), showspeed=true)
+Threads.@threads for i in 1:length(chi)
+    w_t = EYSM_base_full(N, W_N, chi[i], zeta, f, steps, seed)
+    lock(lk) do 
+        sims[i,:,:] = w_t
+        next!(p)
+    end
+end
+
+# Save with JLD2
+#using JLD2
+#save(&quot;sims.jld2&quot;, &quot;sims&quot;, sims)
+# Load with JLD2
+#sims = load(&quot;sims.jld2&quot;)[&quot;sims&quot;]</code></pre><p>Now at each temperature, we can calculate the mean value of the order parameter and its fluctuations using simple statistics.</p><pre><code class="language-julia hljs"># Each row is x1(T,t) for a given T=χ/ζ
+x1 = dropdims(maximum(sims,dims=3),dims=3)
+# Calculate mean and variance for all temperatures, in the steady state
+using Statistics
+start = 20000
+mean_x1 = mean(x1[:,start:end]/N,dims=2)
+var_x1 = var(x1[:,start:end]/N,dims=2)
+;</code></pre><pre><code class="language-julia hljs">p1 = plot(
+    ylabel = L&quot;x_1&quot;,
+    xlabel = L&quot;T&quot;,
+    fontfamily = &quot;Computer Modern&quot;,
+    xguidefontsize = 17,
+    yguidefontsize = 17,
+    legendfontsize = 15,
+    legendtitlefontsize = 17,
+    xtickfontsize = 17,
+    ytickfontsize = 17,
+    minorticks = true,
+    palette = :julia,
+    size=(640,480),
+    y_foreground_color_text = ColorSchemes.julia[1],
+    y_foreground_color_axis = ColorSchemes.julia[1]
+)
+
+scatter!(p1, chi /zeta, mean_x1, yerr=sqrt.(var_x1),label=&quot;MC, &quot; *L&quot;N=&quot;*&quot;$N&quot;,ms=5)
+p2 = twinx(p1)
+scatter!(
+    p2,
+    chi /zeta, 
+    1e4*var_x1, 
+    label=&quot;&quot;,
+    ms=5,
+    palette=:julia,
+    color=2,
+    minorticks=true,
+    ylabel=L&quot;\sigma^2(x_1)\,[\,\times 10^{-4}]&quot;,
+    yguidefontsize = 17,
+    ytickfontsize = 17,
+    y_foreground_color_text = ColorSchemes.julia[2],
+    y_foreground_color_axis = ColorSchemes.julia[2]
+    )</code></pre><p><img src="../output_14_0.png" alt="MC phase transition"/></p><p>As it can be seen, the two curves are consistent, and the order parameter shows a clear phase transition. The fluctuations of the order parameter are also shown, and they are maximum around the critical point.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ode_systems/ode_systems/">« ODE systems</a><a class="docs-footer-nextpage" href="../../../references/ode/">ODE systems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Monday 23 December 2024 19:00">Monday 23 December 2024</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
