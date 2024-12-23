@@ -10,9 +10,16 @@ makedocs(
     modules = [YardSale],
     pages = [
         "Home" => "index.md",
-        "API" => "api.md",
         "Tutorials" => [
             "ODE systems" => "tutorials/ode_systems/ode_systems.md",
+            "Monte Carlo" => [
+                "EYSM Base" => "tutorials/mc_eysm_base/mc_eysm_base.md",
+            ]
+        ],
+        "References" => [
+            "ODE systems" => "references/ode.md",
+            "Monte Carlo" => "references/mc.md",
+            "Utils" => "references/utils.md",
         ]
     ],
     checkdocs = :none,
