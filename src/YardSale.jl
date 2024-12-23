@@ -23,7 +23,8 @@ include("ode/ode_solvers.jl")
 include("mc/mc_simulator.jl")
 
 # Data analysis
-include("data_analysis/analysis_functions.jl")
+include("data_analysis/ode_analysis_functions.jl")
+include("data_analysis/mc_analysis_functions.jl")
 
 # Exported functions
 # Utils
@@ -35,5 +36,6 @@ export dxdt_net!, solve_ode_net, solve_ode_net_SS
 export EYSM_base_full
 # Data analysis
 export rescale_t
+export get_x1, get_avg_x1
 
 end
