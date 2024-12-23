@@ -7,6 +7,8 @@
     dims::Union{Integer, Tuple{Integer, Integer}}: Dimension(s) to get the richest node.
     It can be an integer or a tuple of integers.
 # Returns
-    x1::AbstractVector: Richest node at each time step.
+    x1::AbstractArray: Richest node at each time step.
 """
-get_x1(x::AbstractArray, dims::Vararg{Integer}=2) = maximum(x, dims=dims)
+function get_x1(x::AbstractArray, dims::Vararg{Integer}=2)
+    return dropdims(maximum(x, dims=dims), dims=dims)
+end
