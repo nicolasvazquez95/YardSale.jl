@@ -132,6 +132,43 @@ end
     seed; w=nothing,initial_conditions="uniform",save_every=nothing)
 Runs a Monte Carlo simulation of the Extender Yard-Sale model on an arbitrary network and
 returns the whole time series of the wealth distribution.
+# Arguments
+    g::SimpleGraph{<:Integer}: Graph representing the network of agents.
+    W_N::Real: Mean wealth of the agents. It is the total wealth divided by the number
+    of agents.
+    interaction_mode::String: Interaction mode. Options are "A" and "B".
+    taxation_mode::String: Taxation mode. Options are "A" and "B".
+    chi::Real: Taxation rate.
+    zeta::Real: Wealth-Attained-Advantage parameter.
+    f::Real: Fraction of the wealth that is redistributed.
+    steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
+    seed::Integer: Seed for the random number generator.
+# Optional arguments
+    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    Only used if initial_conditions="custom". Default is nothing.
+    initial_conditions::String=nothing: Initial condition. Options are
+    "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
+    chosen, the w argument must be provided.
+    save_every::Union{Nothing, Integer}=nothing: Save the wealth distribution every
+    save_every steps. Default is nothing, which means saving every N steps.
+# Details
+This function is the generalization of the EYSM_base_full function to arbitrary networks.
+In the extension, an ambiguity arises in the definition of the interaction rule and the
+taxation rule. That is why we have to define previously the way in which agents will be selected
+to exchange wealth and the way in which the taxation will be applied. For each of these two
+steps, we have two options, which are defined by the interaction_mode and taxation_mode.
+The interaction_mode defines the way in which agents will be selected to exchange wealth.
+The options are:
+- "A": Randomly select a link.
+- "B": Randomly select a node and one of its neighbors.
+The taxation_mode defines the way in which the taxation will be applied. The options are:
+- "A": Tax exchanging agents.
+- "B": Tax two random agents.
+To see the ODE system that describes an equivalent dynamics, see the documentation of the
+`solve_ode_net` function.
+# Returns
+    w_t::Matrix{Real}: Time series of the wealth distribution. Each row is a checkpoint.
+
 
 """
 function EYSM_net_full(
@@ -173,7 +210,150 @@ function EYSM_net_full(
     # Index to iterate over w_t
     idx = 2
 
+    # Best ways to access the graph:
+    # Edges: List of tuples (u,v)
+    edgelist = [(e.src,e.dst) for e in edges(g)]
+    # Random nodes: Instantiate 1:N
+    nodes = 1:N
+    # Neighbors of node: Neighbors list or neighbors(g, node) from Graphs.jl
+    nl = Dict(i => neighbors(g, i) for i in nodes)
+
+    # Check
+    if im ∉ ["A","B"]
+        throw(ArgumentError("Invalid interaction mode. Choose 'A' or 'B'."))
+    elseif tm ∉ ["A","B"]
+        throw(ArgumentError("Invalid taxation mode. Choose 'A' or 'B'."))
+    end
+
     # Simulation loop
-    # TODO
+    # IMA: Randomly select a link
+    if im == "A"
+        # TMA: Tax exchanging agents
+        if tm == "A"
+            for t in 1:steps
+                for exch in nodes
+                    i,j = rand(edgelist)
+                    wi, wj = w[i], w[j]
+                    # Calculate the wealth exchange
+                    δw = Δw(f, wi, wj, zeta_W)
+                    total_tax_i = chif_N * (-wi + (wj/N))
+                    total_tax_j = chif_N * (-wj + (wi/N))
+                    # Update the wealth
+                    w[i] += δw + total_tax_i
+                    w[j] += -δw + total_tax_j
+                end
+                # Save the wealth distribution
+                if t % save_every == 0
+                    w_t[idx, :] .= w
+                    idx += 1
+                    # Check for negative wealth
+                    if any(w .< 0)
+                        throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                        return w_t
+                    end
+                    # Re normalize the wealth
+                    w .*= W/sum(w)
+                end
+            end
+        # TMB: Tax two random agents
+        elseif tm == "B"
+            for t in 1:steps
+                for exch in nodes
+                    # Exchange agents
+                    i,j = rand(nodes, 2)
+                    wi, wj = w[i], w[j]
+                    # Taxed agents
+                    i_taxed, j_taxed = rand(nodes, 2)
+                    total_tax_i = chif_N * (-wi_taxed + (wj_taxed/N))
+                    total_tax_j = chif_N * (-wj_taxed + (wi_taxed/N))
+                    # Calculate the wealth exchange
+                    δw = Δw(f, wi, wj, zeta_W)
+                    # Update the wealths
+                    w[i] += δw
+                    w[j] -= δw
+                    w[i_taxed] += total_tax_i
+                    w[j_taxed] += total_tax_j
+                end
+                # Save the wealth distribution
+                if t % save_every == 0
+                    w_t[idx, :] .= w
+                    idx += 1
+                    # Check for negative wealth
+                    if any(w .< 0)
+                        throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                        return w_t
+                    end
+                    # Re normalize the wealth
+                    w .*= W/sum(w)
+                end
+            end
+        end
+    # IMB: Randomly select a node and one of its neighbors
+    elseif im == "B"
+        # TMA: Tax exchanging agents
+        if tm == "A"
+            for t in 1:steps
+                for exch in nodes
+                    i = rand(nodes)
+                    j = rand(neighbors(g,i))
+                    wi, wj = w[i], w[j]
+                    # Calculate the wealth exchange
+                    δw = Δw(f, wi, wj, zeta_W)
+                    total_tax_i = chif_N * (-wi + (wj/N))
+                    total_tax_j = chif_N * (-wj + (wi/N))
+                    # Update the wealth
+                    w[i] += δw + total_tax_i
+                    w[j] += -δw + total_tax_j
+                end
+                # Save the wealth distribution
+                if t % save_every == 0
+                    w_t[idx, :] .= w
+                    idx += 1
+                    # Check for negative wealth
+                    if any(w .< 0)
+                        throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                        return w_t
+                    end
+                    # Re normalize the wealth
+                    w .*= W/sum(w)
+                end
+            end
+        # TMB: Tax two random agents
+        elseif tm == "B"
+            for t in 1:steps
+                for exch in nodes
+                    # Exchange agents
+                    i = rand(nodes)
+                    j = rand(neighbors(g,i))
+                    wi, wj = w[i], w[j]
+                    # Taxed agents
+                    i_taxed, j_taxed = rand(nodes, 2)
+                    wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
+                    w_taxed = wi_taxed + wj_taxed
+                    # Calculate the wealth exchange
+                    δw = Δw(f, wi, wj, zeta_W)
+                    total_tax_i = chif_N * (-wi_taxed + (wj_taxed/N))
+                    total_tax_j = chif_N * (-wj_taxed + (wi_taxed/N))
+                    # Update the wealth
+                    w[i] += δw
+                    w[j] -= δw
+                    w[i_taxed] += total_tax_i
+                    w[j_taxed] += total_tax_j
+                end
+                # Save the wealth distribution
+                if t % save_every == 0
+                    w_t[idx, :] .= w
+                    idx += 1
+                    # Check for negative wealth
+                    if any(w .< 0)
+                        throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                        return w_t
+                    end
+                    # Re normalize the wealth
+                    w .*= W/sum(w)
+                end
+            end
+        end
+    end
     return w_t
 end

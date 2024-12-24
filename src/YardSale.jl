@@ -33,7 +33,7 @@ export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution
 # ODE
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
-export EYSM_base_full
+export EYSM_base_full, EYSM_net_full
 # Data analysis
 export rescale_t
 export get_x1, get_avg_x1
