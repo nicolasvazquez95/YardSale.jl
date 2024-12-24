@@ -164,12 +164,18 @@ The options are:
 The taxation_mode defines the way in which the taxation will be applied. The options are:
 - "A": Tax exchanging agents.
 - "B": Tax two random agents.
+The equation governing the wealth exchange is a generalization of the one used in the
+EYSM_base_full function:
+```math
+\\Delta w_i(t) = \\chi\\Delta t(-b_i(t) w_i(t) + \\frac{1}{N}\\sum_j b_j(t)w_j(t))
++ \\sum_j c_{ij}(t)\\sqrt{\\gamma\\Delta t} \\eta_{ij}(t)\\min(w_i(t), w_j(t))
+```
+where now ``b_i(t)`` represents an event of taxation over agent ``i`` and ``c_{ij}(t)``
+represents an event of wealth exchange between agents ``i`` and ``j``.
 To see the ODE system that describes an equivalent dynamics, see the documentation of the
 `solve_ode_net` function.
 # Returns
     w_t::Matrix{Real}: Time series of the wealth distribution. Each row is a checkpoint.
-
-
 """
 function EYSM_net_full(
     g::SimpleGraph{<:Integer},
@@ -195,6 +201,7 @@ function EYSM_net_full(
     W = sum(w)
     # Calculate some useful constants
     chif_N = chi * f / N
+    chif_N2 = chi * f / (N^2)
     zeta_W = zeta / W
 
     # Initialize the time series
@@ -236,11 +243,11 @@ function EYSM_net_full(
                     wi, wj = w[i], w[j]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
-                    total_tax_i = chif_N * (-wi + (wj/N))
-                    total_tax_j = chif_N * (-wj + (wi/N))
-                    # Update the wealth
-                    w[i] += δw + total_tax_i
-                    w[j] += -δw + total_tax_j
+                    # Update the wealth and apply the taxation
+                    w[i] += δw - chif_N * wi
+                    w[j] += -δw - chif_N * wj
+                    # Everybody receives the benefits of the taxation
+                    w .+= chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
@@ -264,15 +271,17 @@ function EYSM_net_full(
                     wi, wj = w[i], w[j]
                     # Taxed agents
                     i_taxed, j_taxed = rand(nodes, 2)
-                    total_tax_i = chif_N * (-wi_taxed + (wj_taxed/N))
-                    total_tax_j = chif_N * (-wj_taxed + (wi_taxed/N))
+                    wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
                     # Update the wealths
                     w[i] += δw
                     w[j] -= δw
-                    w[i_taxed] += total_tax_i
-                    w[j_taxed] += total_tax_j
+                    # Tax the agents
+                    w[i_taxed] -= chif_N * wi_taxed
+                    w[j_taxed] -= chi_N * wj_taxed
+                    # Everybody receives the benefits of the taxation
+                    w .+= chif_N2 * (wi_taxed + wj_taxed)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
@@ -299,11 +308,11 @@ function EYSM_net_full(
                     wi, wj = w[i], w[j]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
-                    total_tax_i = chif_N * (-wi + (wj/N))
-                    total_tax_j = chif_N * (-wj + (wi/N))
                     # Update the wealth
-                    w[i] += δw + total_tax_i
-                    w[j] += -δw + total_tax_j
+                    w[i] += δw - chif_N * wi
+                    w[j] -= δw - chif_N * wj
+                    # Everybody receives the benefits of the taxation
+                    w .+= chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
@@ -332,13 +341,14 @@ function EYSM_net_full(
                     w_taxed = wi_taxed + wj_taxed
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
-                    total_tax_i = chif_N * (-wi_taxed + (wj_taxed/N))
-                    total_tax_j = chif_N * (-wj_taxed + (wi_taxed/N))
                     # Update the wealth
                     w[i] += δw
                     w[j] -= δw
-                    w[i_taxed] += total_tax_i
-                    w[j_taxed] += total_tax_j
+                    # Tax the agents
+                    w[i_taxed] -= chif_N * wi_taxed
+                    w[j_taxed] -= chif_N * wj_taxed
+                    # Everybody receives the benefits of the taxation
+                    w .+= chif_N2 * w_taxed
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
