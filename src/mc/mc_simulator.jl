@@ -279,7 +279,7 @@ function EYSM_net_full(
                     w[j] -= δw
                     # Tax the agents
                     w[i_taxed] -= chif_N * wi_taxed
-                    w[j_taxed] -= chi_N * wj_taxed
+                    w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
                     w .+= chif_N2 * (wi_taxed + wj_taxed)
                 end
