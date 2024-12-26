@@ -310,9 +310,11 @@ function EYSM_net_full(
         # TMA: Tax exchanging agents
         if taxation_mode == "A"
             for t in 1:steps
+                rand_nodes = rand(1:N, N)
+                rand_neighbors = [rand(neighbors(g,i)) for i in rand_nodes]
                 for exch in nodes
-                    i = rand(nodes)
-                    j = rand(neighbors(g,i))
+                    i = rand_nodes[exch]
+                    j = rand_neighbors[exch]
                     wi, wj = w[i], w[j]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
