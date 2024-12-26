@@ -267,8 +267,8 @@ function EYSM_net_full(
             end
         # TMB: Tax two random agents
         elseif taxation_mode == "B"
-            taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
             for t in 1:steps
+                taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
                 for exch in nodes
                     # Exchange agents
                     i,j = rand(edgelist)
@@ -342,10 +342,12 @@ function EYSM_net_full(
         elseif taxation_mode == "B"
             for t in 1:steps
                 taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
+                rand_nodes = rand(1:N, N)
+                rand_neighbors = [rand(neighbors(g,i)) for i in rand_nodes]
                 for exch in nodes
                     # Exchange agents
-                    i = rand(nodes)
-                    j = rand(neighbors(g,i))
+                    i = rand_nodes[exch]
+                    j = rand_neighbors[exch]
                     wi, wj = w[i], w[j]
                     # Taxed agents
                     i_taxed, j_taxed = taxed_agents[exch]
