@@ -14,5 +14,5 @@ The package is not yet registered in the Julia General Registry. To install it, 
 
 ```julia
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/nicolasvazquez95/YardSale.jl"))
+Pkg.add("https://github.com/nicolasvazquez95/YardSale.jl")
 ```
