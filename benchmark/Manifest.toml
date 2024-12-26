@@ -2609,7 +2609,7 @@ version = "1.5.0+1"
 
 [[deps.YardSale]]
 deps = ["DifferentialEquations", "Distributions", "DocumenterTools", "Graphs", "JuliaFormatter", "Random", "SafeTestsets", "Statistics"]
-git-tree-sha1 = "ced6b726e6cb336302a2adff9535611412033c6c"
+git-tree-sha1 = "79ad7bcf1fe9b95d185c54d6f3b39445306d7a38"
 repo-rev = "master"
 repo-url = ".."
 uuid = "761bf6a0-a09d-4884-b565-c7f10af2b317"
