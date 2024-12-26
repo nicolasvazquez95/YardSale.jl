@@ -247,6 +247,7 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
+                    # Broadcasting in TMA is more efficient! (I measured it)
                     @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
@@ -283,6 +284,7 @@ function EYSM_net_full(
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
                     # Trying to reduce the number of memory allocations by using a for loop
+                    # It has a little impact on performance on TMB (I measured it)
                     tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
                     for i in nodes
                         w[i] += tax_benefit
@@ -319,6 +321,7 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] -= δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
+                    # Broadcasting in TMA is more efficient! (I measured it)
                     @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
@@ -357,6 +360,8 @@ function EYSM_net_full(
                     w[i_taxed] -= chif_N * wi_taxed
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
+                    # Trying to reduce the number of memory allocations by using a for loop
+                    # It has a little impact on performance on TMB (I measured it)
                     tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
                     for i in nodes
                         w[i] += tax_benefit
