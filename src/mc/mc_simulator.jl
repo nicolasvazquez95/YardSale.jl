@@ -42,8 +42,8 @@ where ``\\eta_{ij}`` is a stochastic variable with values -1 or 1. The expected 
 ```
 3. The wealth of the agents is updated as follows:
 ```math
-w_i \\leftarrow w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
-w_j \\leftarrow w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
+w_i \\to w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
+w_j \\to w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
 ````
 where ``\\chi`` represents the taxation and redistribution rate.
 
@@ -226,17 +226,17 @@ function EYSM_net_full(
     nl = Dict(i => neighbors(g, i) for i in nodes)
 
     # Check
-    if im ∉ ["A","B"]
+    if interaction_mode ∉ ["A","B"]
         throw(ArgumentError("Invalid interaction mode. Choose 'A' or 'B'."))
-    elseif tm ∉ ["A","B"]
+    elseif taxation_mode ∉ ["A","B"]
         throw(ArgumentError("Invalid taxation mode. Choose 'A' or 'B'."))
     end
 
     # Simulation loop
     # IMA: Randomly select a link
-    if im == "A"
+    if interaction_mode == "A"
         # TMA: Tax exchanging agents
-        if tm == "A"
+        if taxation_mode == "A"
             for t in 1:steps
                 for exch in nodes
                     i,j = rand(edgelist)
@@ -263,7 +263,7 @@ function EYSM_net_full(
                 end
             end
         # TMB: Tax two random agents
-        elseif tm == "B"
+        elseif taxation_mode == "B"
             for t in 1:steps
                 for exch in nodes
                     # Exchange agents
@@ -298,9 +298,9 @@ function EYSM_net_full(
             end
         end
     # IMB: Randomly select a node and one of its neighbors
-    elseif im == "B"
+    elseif interaction_mode == "B"
         # TMA: Tax exchanging agents
-        if tm == "A"
+        if taxation_mode == "A"
             for t in 1:steps
                 for exch in nodes
                     i = rand(nodes)
@@ -328,7 +328,7 @@ function EYSM_net_full(
                 end
             end
         # TMB: Tax two random agents
-        elseif tm == "B"
+        elseif taxation_mode == "B"
             for t in 1:steps
                 for exch in nodes
                     # Exchange agents
