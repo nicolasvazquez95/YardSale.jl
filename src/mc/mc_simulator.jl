@@ -247,11 +247,14 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi + wj)
+                    tax_benefit = chif_N2 * (wi + wj)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -259,20 +262,19 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
         elseif taxation_mode == "B"
+            taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
             for t in 1:steps
-                # Optimization: Pre-calculate the taxed agents
-                taxed_agents = rand(nodes, 2, N)
                 for exch in nodes
                     # Exchange agents
-                    i,j = rand(nodes, 2)
+                    i,j = rand(edgelist)
                     wi, wj = w[i], w[j]
                     # Taxed agents
-                    i_taxed, j_taxed = taxed_agents[:, exch]
+                    i_taxed, j_taxed = taxed_agents[exch]
                     wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
@@ -283,11 +285,15 @@ function EYSM_net_full(
                     w[i_taxed] -= chif_N * wi_taxed
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi_taxed + wj_taxed)
+                    # Trying to reduce the number of memory allocations by using a for loop
+                    tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -295,7 +301,7 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         end
@@ -314,11 +320,14 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] -= δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi + wj)
+                    tax_benefit = chif_N2 * (wi + wj)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -326,21 +335,21 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
         elseif taxation_mode == "B"
             for t in 1:steps
+                taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
                 for exch in nodes
                     # Exchange agents
                     i = rand(nodes)
                     j = rand(neighbors(g,i))
                     wi, wj = w[i], w[j]
                     # Taxed agents
-                    i_taxed, j_taxed = rand(nodes, 2)
+                    i_taxed, j_taxed = taxed_agents[exch]
                     wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
-                    w_taxed = wi_taxed + wj_taxed
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
                     # Update the wealth
@@ -350,11 +359,14 @@ function EYSM_net_full(
                     w[i_taxed] -= chif_N * wi_taxed
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * w_taxed
+                    tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -362,7 +374,7 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         end
