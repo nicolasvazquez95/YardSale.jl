@@ -247,10 +247,7 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    tax_benefit = chif_N2 * (wi + wj)
-                    for i in nodes
-                        w[i] += tax_benefit
-                    end
+                    @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
@@ -322,10 +319,7 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] -= δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    tax_benefit = chif_N2 * (wi + wj)
-                    for i in nodes
-                        w[i] += tax_benefit
-                    end
+                    @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
