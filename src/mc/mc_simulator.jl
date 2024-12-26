@@ -265,12 +265,14 @@ function EYSM_net_full(
         # TMB: Tax two random agents
         elseif taxation_mode == "B"
             for t in 1:steps
+                # Optimization: Pre-calculate the taxed agents
+                taxed_agents = rand(nodes, 2, N)
                 for exch in nodes
                     # Exchange agents
                     i,j = rand(nodes, 2)
                     wi, wj = w[i], w[j]
                     # Taxed agents
-                    i_taxed, j_taxed = rand(nodes, 2)
+                    i_taxed, j_taxed = taxed_agents[:, exch]
                     wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
