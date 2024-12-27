@@ -42,8 +42,8 @@ where ``\\eta_{ij}`` is a stochastic variable with values -1 or 1. The expected 
 ```
 3. The wealth of the agents is updated as follows:
 ```math
-w_i \\leftarrow w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
-w_j \\leftarrow w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
+w_i \\to w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
+w_j \\to w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
 ````
 where ``\\chi`` represents the taxation and redistribution rate.
 
@@ -226,17 +226,17 @@ function EYSM_net_full(
     nl = Dict(i => neighbors(g, i) for i in nodes)
 
     # Check
-    if im ∉ ["A","B"]
+    if interaction_mode ∉ ["A","B"]
         throw(ArgumentError("Invalid interaction mode. Choose 'A' or 'B'."))
-    elseif tm ∉ ["A","B"]
+    elseif taxation_mode ∉ ["A","B"]
         throw(ArgumentError("Invalid taxation mode. Choose 'A' or 'B'."))
     end
 
     # Simulation loop
     # IMA: Randomly select a link
-    if im == "A"
+    if interaction_mode == "A"
         # TMA: Tax exchanging agents
-        if tm == "A"
+        if taxation_mode == "A"
             for t in 1:steps
                 for exch in nodes
                     i,j = rand(edgelist)
@@ -247,11 +247,12 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi + wj)
+                    # Broadcasting in TMA is more efficient! (I measured it)
+                    @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -259,18 +260,19 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
-        elseif tm == "B"
+        elseif taxation_mode == "B"
             for t in 1:steps
+                taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
                 for exch in nodes
                     # Exchange agents
-                    i,j = rand(nodes, 2)
+                    i,j = rand(edgelist)
                     wi, wj = w[i], w[j]
                     # Taxed agents
-                    i_taxed, j_taxed = rand(nodes, 2)
+                    i_taxed, j_taxed = taxed_agents[exch]
                     wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
@@ -279,13 +281,18 @@ function EYSM_net_full(
                     w[j] -= δw
                     # Tax the agents
                     w[i_taxed] -= chif_N * wi_taxed
-                    w[j_taxed] -= chi_N * wj_taxed
+                    w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi_taxed + wj_taxed)
+                    # Trying to reduce the number of memory allocations by using a for loop
+                    # It has a little impact on performance on TMB (I measured it)
+                    tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -293,18 +300,20 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         end
     # IMB: Randomly select a node and one of its neighbors
-    elseif im == "B"
+    elseif interaction_mode == "B"
         # TMA: Tax exchanging agents
-        if tm == "A"
+        if taxation_mode == "A"
             for t in 1:steps
+                rand_nodes = rand(1:N, N)
+                rand_neighbors = [rand(neighbors(g,i)) for i in rand_nodes]
                 for exch in nodes
-                    i = rand(nodes)
-                    j = rand(neighbors(g,i))
+                    i = rand_nodes[exch]
+                    j = rand_neighbors[exch]
                     wi, wj = w[i], w[j]
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
@@ -312,11 +321,12 @@ function EYSM_net_full(
                     w[i] += δw - chif_N * wi
                     w[j] -= δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * (wi + wj)
+                    # Broadcasting in TMA is more efficient! (I measured it)
+                    @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -324,21 +334,23 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
-        elseif tm == "B"
+        elseif taxation_mode == "B"
             for t in 1:steps
+                taxed_agents = [(rand(nodes), rand(nodes)) for _ in 1:N]
+                rand_nodes = rand(1:N, N)
+                rand_neighbors = [rand(neighbors(g,i)) for i in rand_nodes]
                 for exch in nodes
                     # Exchange agents
-                    i = rand(nodes)
-                    j = rand(neighbors(g,i))
+                    i = rand_nodes[exch]
+                    j = rand_neighbors[exch]
                     wi, wj = w[i], w[j]
                     # Taxed agents
-                    i_taxed, j_taxed = rand(nodes, 2)
+                    i_taxed, j_taxed = taxed_agents[exch]
                     wi_taxed, wj_taxed = w[i_taxed], w[j_taxed]
-                    w_taxed = wi_taxed + wj_taxed
                     # Calculate the wealth exchange
                     δw = Δw(f, wi, wj, zeta_W)
                     # Update the wealth
@@ -348,11 +360,16 @@ function EYSM_net_full(
                     w[i_taxed] -= chif_N * wi_taxed
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
-                    w .+= chif_N2 * w_taxed
+                    # Trying to reduce the number of memory allocations by using a for loop
+                    # It has a little impact on performance on TMB (I measured it)
+                    tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
+                    for i in nodes
+                        w[i] += tax_benefit
+                    end
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
-                    w_t[idx, :] .= w
+                    @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
                     if any(w .< 0)
@@ -360,7 +377,7 @@ function EYSM_net_full(
                         return w_t
                     end
                     # Re normalize the wealth
-                    w .*= W/sum(w)
+                    @. w *= W/sum(w)
                 end
             end
         end
