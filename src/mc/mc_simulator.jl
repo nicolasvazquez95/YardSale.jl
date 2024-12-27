@@ -367,3 +367,115 @@ function EYSM_net_full(
     end
     return w_t
 end
+
+
+### TESTING FUNCTIONS ###
+
+function EYSM_base_callbacks(
+    N::Integer,
+    W_N::Real,
+    chi::Real,
+    zeta::Real,
+    f::Real,
+    steps::Integer,
+    seed::Integer;
+    w::Union{Nothing, Vector{<:Real}}=nothing,
+    initial_conditions::String="uniform",
+    save_every::Union{Nothing, Integer}=nothing,
+    callbacks::Union{Nothing, Dict{Symbol, Function}}=nothing,
+    callbacks_only::Bool=false
+)
+    # Set the seed
+    Random.seed!(seed)
+    # Initialize wealth distribution
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    # Calculate the total wealth
+    W = sum(w)
+    # Calculate some useful constants
+    chif_N = chi * f / N
+    zeta_W = zeta / W
+
+    # Initialize the time series
+    ## Check the save_every argument
+    if isnothing(save_every)
+        save_every = N
+    end
+    ## Check for callbacks
+    if callbacks_only
+        w_t = nothing
+    else
+        ## Initialize the time series
+        ### Each row of w_t is a checkpoint
+        w_t = zeros(typeof(W_N), 1 +(steps ÷ save_every), N)
+        ## Save the initial condition
+        w_t[1, :] .= w
+    end
+
+    # Initialize the callbacks
+    callback_results = Dict{Symbol, Vector{<:Real}}()
+    if !isnothing(callbacks)
+        for (name, f) in callbacks
+            callback_results[name] = Vector{typeof(f(w))}(undef, (steps ÷ save_every) + 1)
+        end
+        # Save the initial condition
+        for (name,f) in callbacks
+            callback_results[name][1] = f(w)
+        end
+    end
+
+    # Simulation loop
+    for t in 1:steps
+        for exch in 1:N
+            # Select two agents
+            i, j = rand(1:N, 2)
+            # Avoid self-exchanges
+            while i == j
+                j = rand(1:N)
+            end
+            # Calculate the wealth exchange
+            wi, wj = w[i], w[j]
+            δw = Δw(f, wi, wj, zeta_W)
+            # Calculate the redistribution terms
+            redist_i = EYSM_base_redistribution(wi, W_N, chif_N)
+            redist_j = EYSM_base_redistribution(wj, W_N, chif_N)
+            # Update the wealth
+            w[i] = wi + δw + redist_i
+            w[j] = wj - δw + redist_j
+        end
+        # Save the wealth distribution and apply the callbacks
+        if t % save_every == 0
+            if !callbacks_only
+                @. w_t[idx, :] = w
+            end
+            # Apply the callbacks
+            if !isnothing(callbacks)
+                for (name,f) in callbacks
+                    callback_results[name][idx] = f(w)
+                end
+            end
+            # After saving, move to the next index
+            idx += 1
+            # Check for negative wealth
+            if any(w .< 0)
+                throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                if callbacks_only
+                    return callback_results
+                elseif isnothing(callbacks)
+                    return w_t
+                else
+                    return w_t, callback_results
+                end
+            end
+            # Re normalize the wealth
+            w .*= W/sum(w)
+        end
+    end
+    # Return the results according to the arguments
+    if callbacks_only
+        return callback_results
+    elseif isnothing(callbacks)
+        return w_t
+    else
+        return w_t, callback_results
+    end
+end
