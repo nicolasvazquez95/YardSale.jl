@@ -1,6 +1,4 @@
 # Callbacks functions for the Monte Carlo simulations
-
-# x1
 """
     get_x1(w::Vector{<:Real})
 Calculate the wealth fraction of the richest agent in the system.

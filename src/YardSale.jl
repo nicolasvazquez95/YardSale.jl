@@ -21,6 +21,7 @@ include("ode/ode_solvers.jl")
 
 # MC
 include("mc/mc_simulator.jl")
+include("mc/callbacks.jl")
 
 # Data analysis
 include("data_analysis/ode_analysis_functions.jl")
@@ -34,6 +35,7 @@ export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
 export EYSM_base_full, EYSM_net_full
+export get_x1, get_xi, get_gini, get_lorenz
 # Data analysis
 export rescale_t
 export get_x1, get_avg_x1
