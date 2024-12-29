@@ -6,7 +6,8 @@ using YardSale
 # Documenter can automatically generate documentation for a package.
 makedocs(
     sitename = "YardSale.jl",
-    format = Documenter.HTML(),
+    format = Documenter.HTML(; assets = ["assets/custom.css"],
+    prettyurls = get(ENV, "CI", nothing) == "true"),
     modules = [YardSale],
     pages = [
         "Home" => "index.md",
