@@ -5,7 +5,7 @@ using Documenter
 using YardSale
 # Documenter can automatically generate documentation for a package.
 makedocs(
-    sitename = "YardSale",
+    sitename = "YardSale.jl",
     format = Documenter.HTML(),
     modules = [YardSale],
     pages = [
@@ -23,6 +23,7 @@ makedocs(
         ]
     ],
     checkdocs = :none,
+
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
