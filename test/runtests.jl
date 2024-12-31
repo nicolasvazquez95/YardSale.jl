@@ -15,4 +15,8 @@ using Test, SafeTestsets
           include("unit/ode/ode_solvers.jl")
     end
       # MC
+      ## Callbacks
+    @safetestset "mc/callbacks" begin
+        include("unit/mc/callbacks.jl")
+      end
 end
