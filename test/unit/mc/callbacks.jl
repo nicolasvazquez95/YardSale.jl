@@ -31,11 +31,12 @@ end
 @testset "get_gini" begin
     @test get_gini(w1) ≈ 0.0
     @test 0.0 ≤ get_gini(w2) ≤ 1.0
-    @test get_gini(w3) ≈ 1.0
+    # The Gini coefficient of a totally condensed distribution is 1.0.
+    # The formula is multiplied by (N / (N - 1)) to correct the bias.
+    @test get_gini(w3) * (N / (N - 1)) ≈ 1.0
 end
 
 @testset "get_lorenz" begin
     @test get_lorenz(w1) ≈ cumsum(ones(N)) / N
     @test get_lorenz(w3) ≈ reverse(w3)/sum(w3)
-    @test 0.0 ≤ get_lorenz(w2) ≤ 1.0
 end

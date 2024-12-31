@@ -44,8 +44,7 @@ function get_gini(w::Vector{<:Real})
     for i in 1:N
         wi = w[i]
         for j in 1:N
-            wj = w[j]
-            g += abs(wi - wj)
+            g += abs(wi - w[j])
         end
     end
     return g / (2*N*sum(w))
