@@ -387,7 +387,6 @@ end
 
 
 ### TESTING FUNCTIONS ###
-
 function EYSM_base_callbacks(
     N::Integer,
     W_N::Real,
@@ -424,22 +423,34 @@ function EYSM_base_callbacks(
         ## Initialize the time series
         ### Each row of w_t is a checkpoint
         w_t = zeros(typeof(W_N), 1 +(steps ÷ save_every), N)
-        ## Save the initial condition
-        w_t[1, :] .= w
     end
-
     # Initialize the callbacks
-    callback_results = Dict{Symbol, Vector{<:Real}}()
+    callback_results = Dict{Symbol, AbstractVe}()
     if !isnothing(callbacks)
         for (name, f) in callbacks
             callback_results[name] = Vector{typeof(f(w))}(undef, (steps ÷ save_every) + 1)
         end
-        # Save the initial condition
-        for (name,f) in callbacks
-            callback_results[name][1] = f(w)
+    end
+    # Define a function for saving the results of the callbacks
+    function save_callbacks!(w, callbacks, idx)
+        if !isnothing(callbacks)
+            for (name, f) in callbacks
+                callback_results[name][idx] = f(w)
+            end
         end
     end
-
+    # Define a function for saving the wealth distribution
+    function save_wealth!(w_t, w, idx, callbacks_only)
+        if !callbacks_only
+            @. w_t[idx, :] = w
+        end
+    end
+    # Now save the initial conditions
+    idx = 1
+    save_callbacks!(w, callbacks, idx)
+    save_wealth!(w_t, w, idx, callbacks_only)
+    # After saving, move to the next index
+    idx += 1
     # Simulation loop
     for t in 1:steps
         for exch in 1:N
@@ -461,27 +472,13 @@ function EYSM_base_callbacks(
         end
         # Save the wealth distribution and apply the callbacks
         if t % save_every == 0
-            if !callbacks_only
-                @. w_t[idx, :] = w
-            end
-            # Apply the callbacks
-            if !isnothing(callbacks)
-                for (name,f) in callbacks
-                    callback_results[name][idx] = f(w)
-                end
-            end
+            save_callbacks!(w, callbacks, idx)
+            save_wealth!(w_t, w, idx, callbacks_only)
             # After saving, move to the next index
             idx += 1
             # Check for negative wealth
             if any(w .< 0)
                 throw(ArgumentError("Negative wealth detected. Simulation stopped."))
-                if callbacks_only
-                    return callback_results
-                elseif isnothing(callbacks)
-                    return w_t
-                else
-                    return w_t, callback_results
-                end
             end
             # Re normalize the wealth
             w .*= W/sum(w)
@@ -490,8 +487,6 @@ function EYSM_base_callbacks(
     # Return the results according to the arguments
     if callbacks_only
         return callback_results
-    elseif isnothing(callbacks)
-        return w_t
     else
         return w_t, callback_results
     end
