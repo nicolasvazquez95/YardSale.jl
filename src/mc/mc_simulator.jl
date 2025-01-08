@@ -478,7 +478,7 @@ function EYSM_base_callbacks(
             idx += 1
             # Check for negative wealth
             if any(w .< 0)
-                throw(ArgumentError("Negative wealth detected. Simulation stopped."))
+                throw(ErrorException("Negative wealth detected. Simulation stopped."))
             end
             # Re normalize the wealth
             w .*= W/sum(w)
