@@ -1,7 +1,7 @@
 name = "YardSale"
 uuid = "761bf6a0-a09d-4884-b565-c7f10af2b317"
 authors = ["Nicolas Vazquez <nicolasvazquez.vonbibow@mi.unc.edu.ar>"]
-version = "0.2.0-DEV"
+version = "0.2.1-DEV"
 
 [deps]
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"

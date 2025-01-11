@@ -385,8 +385,39 @@ function EYSM_net_full(
     return w_t
 end
 
+"""
+    EYSM_base_callbacks(N, W_N, chi, zeta, f, steps, seed; w=nothing,
+    initial_conditions="uniform",save_every=nothing, callbacks=nothing,
+    callbacks_only=false)
+Runs a Monte Carlo simulation of the Extended Yard-Sale Model on a fully connected network
+and returns the whole time series of the wealth distribution and
+the results of the callbacks.
 
-### TESTING FUNCTIONS ###
+# Arguments
+    N::Integer: Number of agents.
+    W_N::Real: Mean wealth of the agents. It is the total wealth divided by the number
+    of agents.
+    chi::Real: Taxation rate.
+    zeta::Real: Wealth-Attained-Advantage parameter.
+    f::Real: Fraction of the wealth that is redistributed.
+    steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
+    seed::Integer: Seed for the random number generator.
+# Optional arguments
+    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    Only used if initial_conditions="custom". Default is nothing.
+    initial_conditions::String=nothing: Initial condition. Options are
+    "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
+    chosen, the w argument must be provided.
+    save_every::Union{Nothing, Integer}=nothing: Save the wealth distribution every
+    save_every steps. Default is nothing, which means saving every N steps.
+    callbacks::Union{Nothing, Dict{Symbol, Function}}=nothing: Dictionary of callbacks.
+    The keys are the names of the callbacks, and the values are the functions that will be
+    called at each checkpoint. The functions must receive the wealth distribution
+    as an argument.
+# Returns
+    w_t::Union{Nothing, Matrix{Real}}: Time series of the wealth distribution. Each row is a checkpoint.
+    callback_results::Union{Nothing, Dict{Symbol, AbstractVector}}: Results of the callbacks.
+"""
 function EYSM_base_callbacks(
     N::Integer,
     W_N::Real,
@@ -490,4 +521,8 @@ function EYSM_base_callbacks(
     else
         return w_t, callback_results
     end
+end
+
+function EYSM_net_callbacks()
+    # TODO
 end

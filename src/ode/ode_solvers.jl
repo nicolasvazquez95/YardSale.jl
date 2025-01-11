@@ -114,23 +114,19 @@ function solve_ode_net(
 
     # Set the random seed
     Random.seed!(seed)
-    # Get the number of nodes
-    N = nv(g)
-    # Get the number of links
-    l = length(edges(g))
-    # Get the edgelist
-    edgelist = [[e.src,e.dst] for e in edges(g)]
-
+    # Check if the graph is connected
+    if !is_connected(g)
+        @warn "The graph is not connected. Using the giant component for the simulation."
+    end
+    # Get the graph data
+    N, l , edgelist, gc = get_graph_data(g)
     # Calculate kappa and beta
-    kappa, beta = get_kappa_beta(g, interaction_mode, taxation_mode)
-
+    kappa, beta = get_kappa_beta(gc, interaction_mode, taxation_mode)
     # Other constants
     n_1 = 1/N
     T_n = T/N
-
     # Parameters
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
-
     # Set initial conditions
     ## Case 1: Noisy initial conditions
     if initial_conditions == "noisy"
@@ -240,21 +236,16 @@ function solve_ode_net_SS(
     integrator::SciMLAlgorithm = Tsit5(),
     kwargs...
     )
-
     # Set the random seed
     Random.seed!(seed)
-    # Get the number of nodes
-    N = nv(g)
-    if N == 0
-        throw(ArgumentError("Graph has no nodes."))
+    # Check if the graph is connected
+    if !is_connected(g)
+        @warn "The graph is not connected. Using the giant component for the simulation."
     end
-    # Get the number of links
-    l = length(edges(g))
-    # Get the edgelist
-    edgelist = [[e.src,e.dst] for e in edges(g)]
-
+    # Get the graph data
+    N, l , edgelist, gc = get_graph_data(g)
     # Calculate kappa and beta
-    kappa, beta = get_kappa_beta(g, interaction_mode, taxation_mode)
+    kappa, beta = get_kappa_beta(gc, interaction_mode, taxation_mode)
 
     # Other constants
     n_1 = 1/N
