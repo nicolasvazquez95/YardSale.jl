@@ -425,14 +425,14 @@ function EYSM_base_callbacks(
         w_t = zeros(typeof(W_N), 1 +(steps ÷ save_every), N)
     end
     # Initialize the callbacks
-    callback_results = Dict{Symbol, AbstractVe}()
+    callback_results = Dict{Symbol, AbstractVector}()
     if !isnothing(callbacks)
         for (name, f) in callbacks
             callback_results[name] = Vector{typeof(f(w))}(undef, (steps ÷ save_every) + 1)
         end
     end
     # Define a function for saving the results of the callbacks
-    function save_callbacks!(w, callbacks, idx)
+    function save_callbacks!(w, callbacks, callback_results, idx)
         if !isnothing(callbacks)
             for (name, f) in callbacks
                 callback_results[name][idx] = f(w)
@@ -447,7 +447,7 @@ function EYSM_base_callbacks(
     end
     # Now save the initial conditions
     idx = 1
-    save_callbacks!(w, callbacks, idx)
+    save_callbacks!(w, callbacks, callback_results, idx)
     save_wealth!(w_t, w, idx, callbacks_only)
     # After saving, move to the next index
     idx += 1
@@ -472,7 +472,7 @@ function EYSM_base_callbacks(
         end
         # Save the wealth distribution and apply the callbacks
         if t % save_every == 0
-            save_callbacks!(w, callbacks, idx)
+            save_callbacks!(w, callbacks, callback_results, idx)
             save_wealth!(w_t, w, idx, callbacks_only)
             # After saving, move to the next index
             idx += 1
