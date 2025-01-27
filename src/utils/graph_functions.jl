@@ -32,6 +32,6 @@ function get_graph_data(g::SimpleGraph)
     # Get the number of links
     l = length(edges(gc))
     # Get the edgelist
-    edgelist = [[e.src,e.dst] for e in edges(gc)]
+    edgelist = [(e.src,e.dst) for e in edges(gc)]
     return N, l, edgelist, gc
 end
