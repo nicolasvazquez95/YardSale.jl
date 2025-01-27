@@ -255,45 +255,7 @@ function solve_ode_net_SS(
     p = (N, l, edgelist, kappa, beta, T_n, n_1)
 
     # Set initial conditions
-    ## Case 1: Noisy initial conditions
-    if initial_conditions == "noisy"
-        gauss = Normal(0.0, 0.01)
-        # x_i = (1/N) * (1 + epsilon_i)
-        x = n_1 * (ones(N) + rand(gauss, N))
-        x /= sum(x)
-    ## Case 2: Random initial conditions
-    elseif initial_conditions == "random"
-        x = rand(N)
-        x /= sum(x)
-    ## Case 3: Uniform initial conditions
-    elseif initial_conditions == "uniform"
-        x = ones(N)/N
-    ## Case 4: Custom initial conditions
-    elseif initial_conditions == "custom"
-        if x isa Vector{<:Real}
-            x = x0
-            # Check if the initial conditions are valid
-            if (sum(x) ≈ 1.0) && all(x .≥ 0.0)
-                # Double check the sum of the initial conditions
-                x /= sum(x)
-            else
-                throw(ArgumentError(
-                    "Invalid initial conditions. The sum of x0 must be 1.0
-                    and all values must be positive."
-                    )
-                )
-            end
-        else
-            throw(ArgumentError("Custom initial conditions must be a vector."))
-        end
-    ## Case 5: Invalid initial conditions
-    else
-        throw(ArgumentError(
-            "Invalid initial conditions.
-            Options are 'noisy', 'random', 'uniform', or 'custom'."
-            )
-        )
-    end
+    x = ode_set_initial_conditions(N, initial_conditions, x0)
 
     # Define the ODE problem
 
