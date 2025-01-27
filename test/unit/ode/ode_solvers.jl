@@ -30,8 +30,10 @@ using YardSale, Test, Graphs
     initial_conditions = "noisy"
     T = 1.0
     seed = 42
-    sol = solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed, initial_conditions)
-
+    sol = solve_ode_net_SS(
+        g, interaction_mode, taxation_mode, T, seed;
+        initial_conditions=initial_conditions
+        )
     # Test that the solution has the correct size
     @test length(sol.u) == n_gc
 end

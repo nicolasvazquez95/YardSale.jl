@@ -1,7 +1,7 @@
 # mc_auxiliary_functions.jl
 # A set of functions to be used in the ODE simulations.
 """
-    ode_set_initial_conditions(N, W_N, initial_conditions,w=nothing)
+    ode_set_initial_conditions(N, initial_conditions,x0=nothing)
 Set the initial conditions for the ODE simulation.
 # Arguments
     N::Integer: Number of agents.
