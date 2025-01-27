@@ -17,10 +17,11 @@ using YardSale, Test, Graphs
         g = erdos_renyi(N,p,seed=seed_er)
     end
     println("Seed for disconnected graph: ", seed_er)
-    println("Number of connected components: ", connected_components(g))
+    println("Number of connected components: ", length(connected_components(g)))
 
     # Size of giant component
     n_gc = nv(get_giant_component(g))
+    println("Size of giant component: ", n_gc)
 
     # Interaction/Taxation Modes
     interaction_mode = "A"
@@ -32,5 +33,5 @@ using YardSale, Test, Graphs
     sol = solve_ode_net_SS(g, interaction_mode, taxation_mode, T, seed, initial_conditions)
 
     # Test that the solution has the correct size
-    @test length(sol) == n_gc
+    @test length(sol.u) == n_gc
 end
