@@ -709,7 +709,8 @@ function EYSM_net_callbacks(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= (W/sum(w))
+                    w ./= sum(w)
+                    w .*= W
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
@@ -790,7 +791,8 @@ function EYSM_net_callbacks(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= (W/sum(w))
+                    w ./= sum(w)
+                    w .*= W
 
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
