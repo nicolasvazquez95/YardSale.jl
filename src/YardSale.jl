@@ -41,7 +41,7 @@ export dxdt_net!, solve_ode_net, solve_ode_net_SS
 export EYSM_base_full, EYSM_net_full
 export get_x1, get_xi, get_gini, get_lorenz
 ## Development functions
-export EYSM_base_callbacks
+export EYSM_base_callbacks, EYSM_net_callbacks
 # Data analysis
 export rescale_t
 export get_x1, get_avg_x1
