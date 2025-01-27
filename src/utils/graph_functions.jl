@@ -7,7 +7,7 @@ Returns the giant component of a graph.
 function get_giant_component(g::SimpleGraph)
     cc = connected_components(g)
     max_cc = argmax(length, cc)
-    return cc[max_cc]
+    return g[max_cc]
 end
 
 """

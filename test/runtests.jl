@@ -6,9 +6,14 @@ using Test, SafeTestsets
    @safetestset "utils/kappa_beta" begin
         include("unit/utils/kappa_beta.jl")
       end
-
+    @safetestset "utils/graph_functions" begin
+          include("unit/utils/graph_functions.jl")
+        end
    @safetestset "utils/mc_auxiliary_functions" begin
         include("unit/utils/mc_auxiliary_functions.jl")
+      end
+    @safetestset "utils/ode_auxiliary_functions" begin
+        include("unit/utils/ode_auxiliary_functions.jl")
       end
       # ODE
     @safetestset "ode/ode_solvers" begin
