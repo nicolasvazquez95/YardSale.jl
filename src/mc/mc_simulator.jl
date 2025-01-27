@@ -505,6 +505,8 @@ function EYSM_base_callbacks(
         end
         # Save the wealth distribution and apply the callbacks
         if t % save_every == 0
+            # Re normalize the wealth
+            w .*= W/sum(w)
             save_callbacks!(w, callbacks, callback_results, idx)
             save_wealth!(w_t, w, idx, callbacks_only)
             # After saving, move to the next index
@@ -513,8 +515,6 @@ function EYSM_base_callbacks(
             if any(w .< 0)
                 throw(ErrorException("Negative wealth detected. Simulation stopped."))
             end
-            # Re normalize the wealth
-            w .*= W/sum(w)
         end
     end
     # Return the results according to the arguments
@@ -585,6 +585,9 @@ function EYSM_net_callbacks(
     w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
     # Calculate the total wealth
     W = sum(w)
+    # DEBUG
+    println("W: ", W)
+    println("Initial wealth: ", w)
     # Calculate some useful constants
     chif_N = chi * f / N
     chif_N2 = chi * f / (N^2)
@@ -665,7 +668,7 @@ function EYSM_net_callbacks(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= W/sum(w)
+                    @. w = (W/sum(w)) * w
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
