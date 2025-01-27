@@ -40,3 +40,13 @@ end
     @test get_lorenz(w1) ≈ cumsum(ones(N)) / N
     @test get_lorenz(w3) ≈ reverse(w3)/sum(w3)
 end
+
+@testset "get_R" begin
+    @test get_R(w1) ≈ 0
+    @test get_R(w3) ≈ 1
+end
+
+@testset "get_u" begin
+    @test get_u(w1) ≈ 0
+    @test get_u(w3) ≈ 1
+end
