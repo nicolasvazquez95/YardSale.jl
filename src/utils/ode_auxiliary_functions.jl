@@ -5,7 +5,6 @@
 Set the initial conditions for the ODE simulation.
 # Arguments
     N::Integer: Number of agents.
-    W_N::Real: Total wealth per agent.
     initial_conditions::String: Initial condition. Options are "uniform", "random", "noisy"
     and "custom".
     x0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution. Only used if
@@ -24,7 +23,7 @@ function ode_set_initial_conditions(
         throw(ArgumentError("Invalid initial condition. Must be one of
         $valid_initial_conditions."))
     end
-    W = 1
+    W = 1.0
     if initial_conditions == "uniform"
         x = fill(1/N, N)
     elseif initial_conditions == "random"
@@ -46,12 +45,12 @@ function ode_set_initial_conditions(
             throw(ArgumentError("Every element of x0 must be non-negative."))
         end
         # Throw a warning if the sum of w is too different from W
-        if (sum(x0) ≈ 1) == false
+        if (sum(x0) ≈ W) == false
             @warn "The sum of x0 is different from 1. It will be normalized by default."
         end
         x = x0
     end
     # Normalize x
-    x ./= sum(x)
+    x ./= W
     return x
 end
