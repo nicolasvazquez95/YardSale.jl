@@ -250,6 +250,9 @@ function EYSM_net_full(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
+
                     @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
@@ -257,8 +260,6 @@ function EYSM_net_full(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
@@ -290,6 +291,9 @@ function EYSM_net_full(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
+
                     @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
@@ -297,8 +301,6 @@ function EYSM_net_full(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         end
@@ -317,13 +319,16 @@ function EYSM_net_full(
                     δw = Δw(f, wi, wj, zeta_W)
                     # Update the wealth
                     w[i] += δw - chif_N * wi
-                    w[j] -= δw - chif_N * wj
+                    w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
                     # Broadcasting in TMA is more efficient! (I measured it)
                     @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
+
                     @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
@@ -331,8 +336,6 @@ function EYSM_net_full(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
@@ -367,6 +370,9 @@ function EYSM_net_full(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
+
                     @. w_t[idx, :] = w
                     idx += 1
                     # Check for negative wealth
@@ -374,8 +380,6 @@ function EYSM_net_full(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         end
@@ -496,8 +500,8 @@ function EYSM_base_callbacks(
             redist_i = EYSM_base_redistribution(wi, W_N, chif_N)
             redist_j = EYSM_base_redistribution(wj, W_N, chif_N)
             # Update the wealth
-            w[i] = wi + δw + redist_i
-            w[j] = wj - δw + redist_j
+            w[i] += δw + redist_i
+            w[j] += - δw + redist_j
         end
         # Save the wealth distribution and apply the callbacks
         if t % save_every == 0
@@ -574,7 +578,7 @@ function EYSM_net_callbacks(
 )
 
     # Get data from the graph
-    N, l, edgelist, gc = get_graph_data(g)
+    N, _, edgelist, gc = get_graph_data(g)
     # Set the seed
     Random.seed!(seed)
     # Initialize wealth distribution
@@ -660,6 +664,8 @@ function EYSM_net_callbacks(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
@@ -669,8 +675,6 @@ function EYSM_net_callbacks(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
@@ -702,6 +706,8 @@ function EYSM_net_callbacks(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
@@ -711,8 +717,6 @@ function EYSM_net_callbacks(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         end
@@ -731,13 +735,15 @@ function EYSM_net_callbacks(
                     δw = Δw(f, wi, wj, zeta_W)
                     # Update the wealth
                     w[i] += δw - chif_N * wi
-                    w[j] -= δw - chif_N * wj
+                    w[j] += -δw - chif_N * wj
                     # Everybody receives the benefits of the taxation
                     # Broadcasting in TMA is more efficient! (I measured it)
                     @. w += chif_N2 * (wi + wj)
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
@@ -747,8 +753,6 @@ function EYSM_net_callbacks(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         # TMB: Tax two random agents
@@ -783,6 +787,8 @@ function EYSM_net_callbacks(
                 end
                 # Save the wealth distribution
                 if t % save_every == 0
+                    # Re normalize the wealth
+                    @. w *= W/sum(w)
                     save_callbacks!(w, callbacks, callback_results, idx)
                     save_wealth!(w_t, w, idx, callbacks_only)
                     # After saving, move to the next index
@@ -792,8 +798,6 @@ function EYSM_net_callbacks(
                         throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                         return w_t
                     end
-                    # Re normalize the wealth
-                    @. w *= W/sum(w)
                 end
             end
         end
