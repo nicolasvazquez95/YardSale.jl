@@ -13,11 +13,11 @@ whole time series of the wealth distribution.
     steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
     seed::Integer: Seed for the random number generator.
 # Optional arguments
-    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
     Only used if initial_conditions="custom". Default is nothing.
     initial_conditions::String=nothing: Initial condition. Options are
     "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
-    chosen, the w argument must be provided.
+    chosen, the w0 argument must be provided.
     save_every::Union{Nothing, Integer}=nothing: Save the wealth distribution every
     save_every steps. Default is nothing, which means saving every N steps.
 # Returns
@@ -65,14 +65,14 @@ function EYSM_base_full(
     f::Real,
     steps::Integer,
     seed::Integer;
-    w::Union{Nothing, Vector{<:Real}}=nothing,
+    w0::Union{Nothing, Vector{<:Real}}=nothing,
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing
 )
     # Set the seed
     Random.seed!(seed)
     # Initialize wealth distribution
-    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     # Calculate the total wealth
     W = sum(w)
     # Calculate some useful constants
@@ -144,7 +144,7 @@ returns the whole time series of the wealth distribution.
     steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
     seed::Integer: Seed for the random number generator.
 # Optional arguments
-    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
     Only used if initial_conditions="custom". Default is nothing.
     initial_conditions::String=nothing: Initial condition. Options are
     "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
@@ -196,7 +196,7 @@ function EYSM_net_full(
     # Set the seed
     Random.seed!(seed)
     # Initialize wealth distribution
-    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     # Calculate the total wealth
     W = sum(w)
     # Calculate some useful constants
@@ -405,7 +405,7 @@ the results of the callbacks.
     steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
     seed::Integer: Seed for the random number generator.
 # Optional arguments
-    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
     Only used if initial_conditions="custom". Default is nothing.
     initial_conditions::String=nothing: Initial condition. Options are
     "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
@@ -428,7 +428,7 @@ function EYSM_base_callbacks(
     f::Real,
     steps::Integer,
     seed::Integer;
-    w::Union{Nothing, Vector{<:Real}}=nothing,
+    w0::Union{Nothing, Vector{<:Real}}=nothing,
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing,
     callbacks::Union{Nothing, Dict{Symbol, Function}}=nothing,
@@ -437,7 +437,7 @@ function EYSM_base_callbacks(
     # Set the seed
     Random.seed!(seed)
     # Initialize wealth distribution
-    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     # Calculate the total wealth
     W = sum(w)
     # Calculate some useful constants
@@ -544,7 +544,7 @@ returns the whole time series of the wealth distribution and the results of the 
     steps::Integer: Number of steps of the simulation, measured in Monte Carlo steps.
     seed::Integer: Seed for the random number generator.
 # Optional arguments
-    w::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial wealth distribution.
     Only used if initial_conditions="custom". Default is nothing.
     initial_conditions::String=nothing: Initial condition. Options are
     "uniform", "random", "noisy" and "custom". Default is "uniform". If "custom" is
@@ -570,7 +570,7 @@ function EYSM_net_callbacks(
     f::Real,
     steps::Integer,
     seed::Integer;
-    w::Union{Nothing, Vector{<:Real}}=nothing,
+    w0::Union{Nothing, Vector{<:Real}}=nothing,
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing,
     callbacks::Union{Nothing, Dict{Symbol, Function}}=nothing,
@@ -582,7 +582,7 @@ function EYSM_net_callbacks(
     # Set the seed
     Random.seed!(seed)
     # Initialize wealth distribution
-    w = mc_set_initial_conditions(N, W_N, initial_conditions, w)
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     # Calculate the total wealth
     W = sum(w)
     # Calculate some useful constants
@@ -698,7 +698,7 @@ function EYSM_net_callbacks(
                     w[j_taxed] -= chif_N * wj_taxed
                     # Everybody receives the benefits of the taxation
                     # Trying to reduce the number of memory allocations by using a for loop
-                    # It has a little impact on performance on TMB (I measured it)
+                    # It has little impact on performance on TMB (I measured it)
                     tax_benefit = chif_N2 * (wi_taxed + wj_taxed)
                     for i in nodes
                         w[i] += tax_benefit
