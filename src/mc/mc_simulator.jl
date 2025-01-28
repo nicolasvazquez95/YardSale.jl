@@ -187,7 +187,7 @@ function EYSM_net_full(
     f::Real,
     steps::Integer,
     seed::Integer;
-    w::Union{Nothing, Vector{<:Real}}=nothing,
+    w0::Union{Nothing, Vector{<:Real}}=nothing,
     initial_conditions::String="uniform",
     save_every::Union{Nothing, Integer}=nothing
 )
