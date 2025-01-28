@@ -15,6 +15,8 @@ makedocs(
             "ODE systems" => "tutorials/ode_systems/ode_systems.md",
             "Monte Carlo" => [
                 "EYSM Base" => "tutorials/mc_eysm_base/mc_eysm_base.md",
+                # "EYSM Net" => "tutorials/mc_eysm_net/mc_eysm_net.md", # TODO
+                "Using callbacks" => "tutorials/using_callbacks/using_callbacks.md",
             ]
         ],
         "References" => [
@@ -24,7 +26,6 @@ makedocs(
         ]
     ],
     checkdocs = :none,
-
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
