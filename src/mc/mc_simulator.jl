@@ -253,7 +253,8 @@ function EYSM_net_full(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= W/sum(w)
+                    w ./= sum(w)
+                    w .*= W
 
                     @. w_t[idx, :] = w
                     idx += 1
