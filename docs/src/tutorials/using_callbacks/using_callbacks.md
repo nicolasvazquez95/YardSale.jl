@@ -124,11 +124,10 @@ w_t, callback_results = EYSM_net_callbacks(
 )
 ;
 ```
-
-    [33m[1m┌ [22m[39m[33m[1mWarning: [22m[39mThe graph has a giant component of 127 nodes.
-    [33m[1m│ [22m[39m        The original graph has 128 nodes.
-    [33m[1m│ [22m[39m        We will use the giant component for the simulation.
-    [33m[1m└ [22m[39m[90m@ YardSale C:\Users\nicol\.julia\packages\YardSale\DqbVW\src\utils\graph_functions.jl:26[39m
+    Warning: The graph has a giant component of 127 nodes.
+    The original graph has 128 nodes.
+    We will use the giant component for the simulation.
+    YardSale C:\Users\nicol\.julia\packages\YardSale\DqbVW\src\utils\graph_functions.jl:26
 
 Now we plot the results from the callbacks for the network simulation.
 
