@@ -79,13 +79,31 @@ Calculate the number of agents with wealth above the poverty line.
 """
 get_R(w::Vector{<:Real}) = sum(w .> mean(w))
 
+
+"""
+    get_r(w::Vector{<:Real}, poverty_line::Real)
+Calculate the fraction of agents with wealth above the poverty line.
+# Arguments
+    w::Vector{<:Real}: Wealth distribution.
+    poverty_line::Real: Poverty line.
+# Returns
+    r::Real: Fraction of agents with wealth above the poverty line.
+"""
+get_r(w::Vector{<:Real}) = typeof(w[1])(get_R(w) / length(w))
+
 """
     get_u(w::Vector{<:Real}, poverty_line::Real)
-Calculate the mean wealth of agents with wealth above the poverty line (mean wealth)
+Calculate the relative mean wealth of agents with wealth above the poverty line (mean wealth)
 # Arguments
     w::Vector{<:Real}: Wealth distribution.
     poverty_line::Real: Poverty line.
 # Returns
     u::Real: Mean wealth of agents with wealth above the poverty line.
 """
-get_u(w::Vector{<:Real}) = isempty(w[w .> mean(w)]) ? typeof(w[1])(0) : mean(w[w .> mean(w)])
+function get_u(w::Vector{<:Real})
+    if isempty(w[w .> mean(w)])
+        return typeof(w[1])(0)
+    else
+        return mean(w[w .> mean(w)])/ sum(w)
+    end
+end
