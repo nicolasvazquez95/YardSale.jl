@@ -39,7 +39,7 @@ export get_giant_component, get_graph_data
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
 export EYSM_base_full, EYSM_net_full
-export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u
+export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u, get_r
 ## Development functions
 export EYSM_base_callbacks, EYSM_net_callbacks
 # Data analysis
