@@ -113,6 +113,10 @@ function EYSM_base_full(
         end
         # Save the wealth distribution
         if t % save_every == 0
+            # Re normalize the wealth
+            w ./= sum(w)
+            w .*= W
+
             w_t[idx, :] .= w
             idx += 1
             # Check for negative wealth
@@ -120,8 +124,6 @@ function EYSM_base_full(
                 throw(ArgumentError("Negative wealth detected. Simulation stopped."))
                 return w_t
             end
-            # Re normalize the wealth
-            w .*= W/sum(w)
         end
     end
     return w_t
@@ -292,7 +294,8 @@ function EYSM_net_full(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= W/sum(w)
+                    w ./= sum(w)
+                    w .*= W
 
                     @. w_t[idx, :] = w
                     idx += 1
@@ -327,7 +330,8 @@ function EYSM_net_full(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= W/sum(w)
+                    w ./= sum(w)
+                    w .*= W
 
                     @. w_t[idx, :] = w
                     idx += 1
@@ -371,7 +375,8 @@ function EYSM_net_full(
                 # Save the wealth distribution
                 if t % save_every == 0
                     # Re normalize the wealth
-                    @. w *= W/sum(w)
+                    w ./= sum(w)
+                    w .*= W
 
                     @. w_t[idx, :] = w
                     idx += 1
@@ -506,7 +511,8 @@ function EYSM_base_callbacks(
         # Save the wealth distribution and apply the callbacks
         if t % save_every == 0
             # Re normalize the wealth
-            w .*= W/sum(w)
+            w ./= sum(w)
+            w .*= W
             save_callbacks!(w, callbacks, callback_results, idx)
             save_wealth!(w_t, w, idx, callbacks_only)
             # After saving, move to the next index

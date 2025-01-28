@@ -2748,11 +2748,11 @@ version = "1.5.0+3"
 
 [[deps.YardSale]]
 deps = ["DifferentialEquations", "Distributions", "DocumenterTools", "Graphs", "JuliaFormatter", "Random", "SafeTestsets", "Statistics"]
-git-tree-sha1 = "24617cec005876b86181431a53a10a0d3af78693"
+git-tree-sha1 = "0658ebef87390bae91a758ff7d514ed4fbe6e64d"
 repo-rev = "master"
 repo-url = ".."
 uuid = "761bf6a0-a09d-4884-b565-c7f10af2b317"
-version = "0.2.5-DEV"
+version = "0.2.7-DEV"
 
 [[deps.ZMQ]]
 deps = ["FileWatching", "PrecompileTools", "Sockets", "ZeroMQ_jll"]
