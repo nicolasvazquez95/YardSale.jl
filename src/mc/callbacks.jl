@@ -69,11 +69,10 @@ get_lorenz(w::Vector{<:Real}) = cumsum(sort(w)) / sum(w)
 
 
 """
-    get_R(w::Vector{<:Real}, poverty_line::Real)
+    get_R(w::Vector{<:Real})
 Calculate the number of agents with wealth above the poverty line.
 # Arguments
     w::Vector{<:Real}: Wealth distribution.
-    poverty_line::Real: Poverty line.
 # Returns
     R::Int: Number of agents with wealth above the poverty line (mean wealth).
 """
@@ -81,22 +80,20 @@ get_R(w::Vector{<:Real}) = sum(w .> mean(w))
 
 
 """
-    get_r(w::Vector{<:Real}, poverty_line::Real)
+    get_r(w::Vector{<:Real})
 Calculate the fraction of agents with wealth above the poverty line.
 # Arguments
     w::Vector{<:Real}: Wealth distribution.
-    poverty_line::Real: Poverty line.
 # Returns
     r::Real: Fraction of agents with wealth above the poverty line.
 """
 get_r(w::Vector{<:Real}) = typeof(w[1])(get_R(w) / length(w))
 
 """
-    get_u(w::Vector{<:Real}, poverty_line::Real)
+    get_u(w::Vector{<:Real})
 Calculate the relative mean wealth of agents with wealth above the poverty line (mean wealth)
 # Arguments
     w::Vector{<:Real}: Wealth distribution.
-    poverty_line::Real: Poverty line.
 # Returns
     u::Real: Mean wealth of agents with wealth above the poverty line.
 """
