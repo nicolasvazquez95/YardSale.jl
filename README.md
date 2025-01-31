@@ -1,10 +1,9 @@
 # YardSale.jl
 
-[![Build Status](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CI.yml?query=branch%3Amaster) 
+[![Build Status](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CI.yml?query=branch%3Amaster)
 [![Documentation](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/documentation.yml)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://nicolasvazquez95.github.io/YardSale.jl/dev)
 [![CompatHelper](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CompatHelper.yml/badge.svg)](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/CompatHelper.yml)
-[![TagBot](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/TagBot.yml/badge.svg)](https://github.com/nicolasvazquez95/YardSale.jl/actions/workflows/TagBot.yml)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
 
