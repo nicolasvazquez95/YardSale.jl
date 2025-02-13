@@ -10,6 +10,7 @@ using Graphs
 using Distributions
 using Random
 using Statistics
+using LinearAlgebra
 
 # Include statements
 # Utils
@@ -43,7 +44,7 @@ export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u, get_r
 ## Development functions
 export EYSM_base_callbacks, EYSM_net_callbacks
 # Data analysis
-export rescale_t, get_lambda
+export rescale_t, get_lambda, get_max_eigenvalue
 export get_x1, get_avg_x1
 
 end

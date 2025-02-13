@@ -77,3 +77,16 @@ function get_lambda(
     end
     return Lambda
 end
+
+"""
+    get_max_eigenvalue(Lambda::Array{<:Real})
+Get the maximum real part of the eigenvalues of the a real matrix.
+We use this function to determine the stability of the ODE system.
+# Arguments
+    Lambda::Array{<:Real}: Matrix.
+# Returns
+    max_eigenvalue::Real: Maximum real part of the eigenvalues.
+"""
+function get_max_eigenvalue(Lambda::Array{<:Real,2})
+    return maximum(real(eigen(Lambda).values))
+end

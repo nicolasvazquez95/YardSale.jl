@@ -24,4 +24,8 @@ using Test, SafeTestsets
     @safetestset "mc/callbacks" begin
         include("unit/mc/callbacks.jl")
       end
+      # Data analysis
+    @safetestset "data_analysis/ode_analysis_functions" begin
+        include("unit/data_analysis/ode_analysis_functions.jl")
+      end
 end
