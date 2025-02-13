@@ -15,9 +15,6 @@ and ODE simulations.
 
 ```@autodocs
 Modules = [YardSale]
-Pages = [
-    "utils/data_analysis/mc_analysis_functions.jl",
-    "utils/data_analysis/ode_analysis_functions.jl"
-    ]
+Pages = ["data_analysis/mc_analysis_functions.jl","data_analysis/ode_analysis_functions.jl"]
 Order   = [:function, :type]
 ```
