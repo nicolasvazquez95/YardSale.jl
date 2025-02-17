@@ -18,6 +18,7 @@ include("utils/kappa_beta.jl")
 include("utils/mc_auxiliary_functions.jl")
 include("utils/ode_auxiliary_functions.jl")
 include("utils/graph_functions.jl")
+include("utils/mf_functions.jl")
 
 # ODE
 include("ode/ode_solvers.jl")
@@ -36,6 +37,7 @@ export get_kappa_beta
 export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution
 export ode_set_initial_conditions
 export get_giant_component, get_graph_data
+export x1_meanField
 # ODE
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
