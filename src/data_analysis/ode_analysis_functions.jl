@@ -33,12 +33,20 @@ function get_lambda(
     T::Real,
     x_ss::Vector{<:Real}
     )
-    N = nv(g)
-    kappa,beta = get_kappa_beta(g, interaction_mode, taxation_mode)
+    # Giant component check
+    gc = get_giant_component(g)
+    N, l, edgelist = get_graph_data(gc)
+
+    # Throw an error if the length of x_ss is different from N
+    if length(x_ss) != N
+        throw(ArgumentError("The length of x_ss must be equal to the number of nodes in the graph."))
+    end
+
+    # Get the kappa and beta vectors
+    kappa, beta = get_kappa_beta(gc, interaction_mode, taxation_mode)
 
     # From kappa, vector, to matrix
     kappa_mat = zeros(N,N)
-    edgelist = [(e.src,e.dst) for e in edges(g)]
     for (l, (i,j)) in enumerate(edgelist)
         kappa_mat[i,j] = kappa[l]
     end
