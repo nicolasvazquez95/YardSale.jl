@@ -2,7 +2,7 @@
 
 julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "098eadfc5ad35c45d1b653826758dba891b33e5d"
+project_hash = "e61d72ffedd9db4c910fa9d66e7f0220a922ae0b"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "72af59f5b8f09faee36b4ec48e014a79210f2f4f"
@@ -783,6 +783,16 @@ deps = ["LinearAlgebra", "Printf", "SparseArrays"]
 git-tree-sha1 = "4f20a2df85a9e5d55c9e84634bbf808ed038cabd"
 uuid = "ba0b0d4f-ebba-5204-a429-3ac8c609bfb7"
 version = "0.9.8"
+
+[[deps.KrylovKit]]
+deps = ["LinearAlgebra", "PackageExtensionCompat", "Printf", "Random", "VectorInterface"]
+git-tree-sha1 = "d7ed24a88732689f26d3f12a817d181d4024bf44"
+uuid = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
+version = "0.8.3"
+weakdeps = ["ChainRulesCore"]
+
+    [deps.KrylovKit.extensions]
+    KrylovKitChainRulesCoreExt = "ChainRulesCore"
 
 [[deps.LayoutPointers]]
 deps = ["ArrayInterface", "LinearAlgebra", "ManualMemory", "SIMDTypes", "Static", "StaticArrayInterface"]
@@ -1941,6 +1951,12 @@ version = "1.0.2"
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 version = "1.11.0"
+
+[[deps.VectorInterface]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "cea8abaa6e43f72f97a09cf95b80c9eb53ff75cf"
+uuid = "409d34a3-91d5-4945-b6ec-7529ddf182d8"
+version = "0.4.9"
 
 [[deps.VectorizationBase]]
 deps = ["ArrayInterface", "CPUSummary", "HostCPUFeatures", "IfElse", "LayoutPointers", "Libdl", "LinearAlgebra", "SIMDTypes", "Static", "StaticArrayInterface"]

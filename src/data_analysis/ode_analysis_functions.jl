@@ -95,6 +95,6 @@ We use this function to determine the stability of the ODE system.
 # Returns
     max_eigenvalue::Real: Maximum real part of the eigenvalues.
 """
-function get_max_eigenvalue(Lambda::Array{<:Real,2})
-    return maximum(real(eigen(Lambda).values))
+function get_max_eigenvalue(Lambda::AbstractMatrix)
+    return real(eigsolve(Lambda, 1, :LR)[1][1])
 end
