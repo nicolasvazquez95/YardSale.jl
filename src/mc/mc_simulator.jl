@@ -44,7 +44,7 @@ where ``\\eta_{ij}`` is a stochastic variable with values -1 or 1. The expected 
 ```math
 w_i \\to w_i - \\Delta w + \\chi (\\frac{W}{N} - w_i)
 w_j \\to w_j + \\Delta w + \\chi (\\frac{W}{N} - w_j)
-````
+```
 where ``\\chi`` represents the taxation and redistribution rate.
 
 In the original paper, the authors work analitically, using a Fokker-Planck approach. In this
