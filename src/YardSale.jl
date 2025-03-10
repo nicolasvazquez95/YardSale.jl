@@ -25,6 +25,7 @@ include("ode/ode_solvers.jl")
 
 # MC
 include("mc/mc_simulator.jl")
+include("mc/risk_aversion_models.jl")
 include("mc/callbacks.jl")
 
 # Data analysis
@@ -42,6 +43,7 @@ export x1_meanField
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
 export EYSM_base_full, EYSM_net_full
+export YS_base_risk, YS_net_risk
 export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u, get_r
 ## Development functions
 export EYSM_base_callbacks, EYSM_net_callbacks

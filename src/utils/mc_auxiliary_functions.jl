@@ -69,6 +69,21 @@ Calculate the amount of wealth exchanged between agents i and j in the EYSM mode
 """
 Δw(f::Real, wi::Real, wj::Real,zeta_W::Real) = f * min(wi,wj) * ηij(wi, wj, zeta_W)
 
+
+"""
+    Δw(wi,wj,ri,rj)
+Calculate the amount of wealth exchanged between agents i and j in the YS model
+with risk aversion.
+# Arguments
+    wi::Real: Wealth of agent i.
+    wj::Real: Wealth of agent j.
+    ri::Real: Risk propension of agent i.
+    rj::Real: Risk propension of agent j.
+# Returns
+    Δw::Real: Amount of wealth exchanged between agents i and j.
+"""
+Δw(wi::Real, wj::Real, ri::Real, rj::Real) = min(ri*wi, rj*wj)
+
 """
     ηij(wi, wj, zeta_W)
 Calculate the stochastic variable ηij in the EYSM model.
@@ -104,7 +119,7 @@ Calculates the redistribution term in the EYSM model for an agent i with wealth 
     W_N::Real: Total wealth per agent.
     chif_N::Real: Taxation and redistribution rate.
 # Details
-In the EYSM model, the redistribution term of the wealth update of agent i ``is`` given by
+In the EYSM model, the redistribution term of the wealth update of agent ``i`` is given by
 ```math
 \\frac{\\chi f}{N}(\\frac{W}{N} - w_i)
 ```

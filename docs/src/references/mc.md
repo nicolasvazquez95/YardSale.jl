@@ -16,3 +16,10 @@ Modules = [YardSale]
 Pages = ["mc/callbacks.jl"]
 Order   = [:function, :type]
 ```
+
+# Risk aversion models
+```@autodocs
+Modules = [YardSale]
+Pages = ["mc/risk_aversion_models.jl"]
+Order   = [:function, :type]
+```
