@@ -1,5 +1,5 @@
 """
-   YS_base_risk(N, W_N, T, initial_conditions, beta; seed = nothing)
+    YS_base_risk(N, W_N, T, initial_conditions, beta; seed = nothing)
 
 Run the Yard-Sale model with risk aversion for N agents with wealth exchange
 in a fully connected network.
@@ -16,7 +16,7 @@ in a fully connected network.
 The model is defined by the following wealth exchange rule:
 ```math
 \\Delta w_{ij} = \\min((1-\\beta_i) w_i, (1 - \\beta_j) w_j)
-´´´
+```
 where ``\\beta_i`` is the risk aversion of agent i.
 
 # Output
@@ -128,7 +128,7 @@ in a complex network.
 The model is defined by the following wealth exchange rule:
 ```math
 \\Delta w_{ij} = \\min((1-\\beta_i) w_i, (1 - \\beta_j) w_j)
-´´´
+```
 where ``\\beta_i`` is the risk aversion of agent i.
 
 At each time step, two agents are chosen at random. The wealth exchange is calculated
