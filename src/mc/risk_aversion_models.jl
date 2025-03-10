@@ -15,9 +15,9 @@ in a fully connected network.
 # Details
 The model is defined by the following wealth exchange rule:
 ```math
-\Delta w_{ij} = \min((1-\beta_i) w_i, (1 - \beta_j) w_j)
+\\Delta w_{ij} = \\min((1-\\beta_i) w_i, (1 - \\beta_j) w_j)
 ´´´
-where ``\beta_i`` is the risk aversion of agent i.
+where ``\\beta_i`` is the risk aversion of agent i.
 
 # Output
     w_t::Matrix{Float32}: T x N matrix with the wealth of the agents at each time step
@@ -127,9 +127,9 @@ in a complex network.
 # Details
 The model is defined by the following wealth exchange rule:
 ```math
-\Delta w_{ij} = \min((1-\beta_i) w_i, (1 - \beta_j) w_j)
+\\Delta w_{ij} = \\min((1-\\beta_i) w_i, (1 - \\beta_j) w_j)
 ´´´
-where ``\beta_i`` is the risk aversion of agent i.
+where ``\\beta_i`` is the risk aversion of agent i.
 
 At each time step, two agents are chosen at random. The wealth exchange is calculated
 according to the rule above, and the wealth of the agents is updated.
