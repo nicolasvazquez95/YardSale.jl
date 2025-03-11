@@ -51,7 +51,7 @@ end
 @testset "mc_set_beta" begin
     # Test beta0
     beta = mc_set_beta(N, "uniform", 1.0)
-    @test beta .≈ 1.0
+    @test beta == fill(1.0, N)
 
     beta = mc_set_beta(N, "random")
     @test length(beta) == N
@@ -61,5 +61,5 @@ end
 
     beta0 = rand(typeof(W_N),N)
     beta = mc_set_beta(N, "custom", beta0)
-    @test beta0 .≈ beta
+    @test beta0 == beta
 end
