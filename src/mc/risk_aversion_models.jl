@@ -8,11 +8,12 @@ in a fully connected network.
     N::Integer: Number of agents
     W_N::Real: Wealth/N quotient
     steps::Integer: Number of MC steps
-    initial_conditions::AbstractVector{<:Real}: Initial conditions
-    beta::AbstractVector{<:Real}: Beta values (risk aversion)
-    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial conditions (optional)
-
-    seed::Union{Nothing, Int64}: Seed for reproducibility (optional)
+    beta::String: Beta values (risk aversion)
+    seed::Integer: Seed for reproducibility
+    initial_conditions::String: Initial conditions (optional)
+    w0::Union{Nothing, Vector{<:Real}}: Initial conditions (optional)
+    beta0::Union{Nothing, Real, Vector{<:Real}}: Initial beta values (optional)
+    save_every::Union{Nothing, Integer}: Save every (optional)
 
 # Details
 The model is defined by the following wealth exchange rule:
@@ -115,11 +116,13 @@ in a complex network.
     g::SimpleGraph{<:Integer}: Graph
     W_N::Real: Wealth/N quotient
     steps::Integer: Number of MC steps
-    initial_conditions::AbstractVector{<:Real}: Initial conditions
-    beta::AbstractVector{<:Real}: Beta values (risk aversion)
-    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial conditions (optional)
-    seed::Union{Nothing, Int64}: Seed for reproducibility (optional)
-    exchange_mode::String: "link" or "node"
+    beta::String: Beta values (risk aversion)
+    exchange_mode::String: Exchange mode
+    seed::Integer: Seed for reproducibility
+    initial_conditions::String: Initial conditions (optional)
+    w0::Union{Nothing, Vector{<:Real}}: Initial conditions (optional)
+    beta0::Union{Nothing, Real, Vector{<:Real}}: Initial beta values (optional)
+    save_every::Union{Nothing, Integer}: Save every (optional)
 
 # Details
 The model is defined by the following wealth exchange rule:
@@ -144,6 +147,7 @@ function YS_net_risk(
     W_N::Real, # Wealth/N quotient
     steps::Integer, # Number of MC steps
     beta::String, # Beta values (risk aversion)
+    exchange_mode::String, # Exchange mode
     seed::Integer; # Seed for reproducibility
     initial_conditions::String="uniform",
     w0::Union{Nothing, Vector{<:Real}}=nothing, # Initial conditions (optional)
