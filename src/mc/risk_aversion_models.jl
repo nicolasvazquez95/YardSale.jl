@@ -11,6 +11,7 @@ in a fully connected network.
     initial_conditions::AbstractVector{<:Real}: Initial conditions
     beta::AbstractVector{<:Real}: Beta values (risk aversion)
     w0::Union{Nothing, Vector{<:Real}}=nothing: Initial conditions (optional)
+
     seed::Union{Nothing, Int64}: Seed for reproducibility (optional)
 
 # Details
@@ -27,10 +28,11 @@ function YS_base_risk(
     N::Integer, # Number of agents
     W_N::Real, # Wealth/N quotient
     steps::Integer, # Number of MC steps
-    initial_conditions::AbstractVector{<:Real}, # Initial conditions
-    beta::AbstractVector{<:Real}; # Beta values
+    beta::String, # Beta values (risk aversion)
+    seed::Integer; # Seed for reproducibility
+    initial_conditions::String="uniform",
     w0::Union{Nothing, Vector{<:Real}}=nothing, # Initial conditions (optional)
-    seed::Union{Nothing, Int64} = nothing, # Seed for reproducibility (optional)
+    beta0::Union{Nothing, Real, Vector{<:Real}}=0.95, # Initial beta values (optional)
     save_every::Union{Nothing, Integer}=nothing
     )
 
@@ -38,10 +40,8 @@ function YS_base_risk(
     w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     W = sum(w) # Total wealth
 
-    # Check if the beta values are correct
-    if length(beta) != N
-        error("Beta values must have the same length as the number of agents")
-    end
+    # Initialize the beta values
+    beta = mc_set_beta(N, beta, beta0)
     # Define risk propension as r = 1 - beta
     r = 1 .- beta # Risk propension (it is computationally more efficient to calculate it once)
 
@@ -143,11 +143,11 @@ function YS_net_risk(
     g::SimpleGraph{<:Integer}, # Graph
     W_N::Real, # Wealth/N quotient
     steps::Integer, # Number of MC steps
-    initial_conditions::AbstractVector{<:Real}, # Initial conditions
-    exchange_mode::String, # "link" or "node"
-    beta::AbstractVector{<:Real}; # Beta values
+    beta::String, # Beta values (risk aversion)
+    seed::Integer; # Seed for reproducibility
+    initial_conditions::String="uniform",
     w0::Union{Nothing, Vector{<:Real}}=nothing, # Initial conditions (optional)
-    seed::Union{Nothing, Int64} = nothing, # Seed for reproducibility (optional)
+    beta0::Union{Nothing, Real, Vector{<:Real}}=0.95, # Initial beta values (optional)
     save_every::Union{Nothing, Integer}=nothing
     )
 
@@ -162,10 +162,9 @@ function YS_net_risk(
     w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
     W = sum(w) # Total wealth
 
-    # Check if the beta values are correct
-    if length(beta) != N
-        error("Beta values must have the same length as the number of agents")
-    end
+    # Initialize the beta values
+    beta = mc_set_beta(N, beta, beta0)
+
     # Define risk propension as r = 1 - beta
     r = 1 .- beta # Risk propension (it is computationally more efficient to calculate it once)
 

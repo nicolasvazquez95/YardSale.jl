@@ -35,14 +35,16 @@ include("data_analysis/mc_analysis_functions.jl")
 # Exported functions
 # Utils
 export get_kappa_beta
-export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution, Δw_risk
+export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution, Δw_risk, mc_set_beta
 export ode_set_initial_conditions
 export get_giant_component, get_graph_data
 export x1_meanField
 # ODE
 export dxdt_net!, solve_ode_net, solve_ode_net_SS
 # MC
+## EYSM models
 export EYSM_base_full, EYSM_net_full
+## Risk aversion models
 export YS_base_risk, YS_net_risk
 export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u, get_r
 ## Development functions

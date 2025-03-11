@@ -47,3 +47,19 @@ W = W_N * N
     # 3.4. Custom initial conditions with negative elements
     @test_throws ArgumentError mc_set_initial_conditions(N, W_N, "custom", fill(-0.5, N))
 end
+
+@testset "mc_set_beta" begin
+    # Test beta0
+    beta = mc_set_beta(N, "uniform", 1.0)
+    @test beta .≈ 1.0
+
+    beta = mc_set_beta(N, "random")
+    @test length(beta) == N
+
+    beta = mc_set_beta(N, "noisy", 0.8)
+    @test length(beta) == N
+
+    beta0 = rand(typeof(W_N),N)
+    beta = mc_set_beta(N, "custom", beta0)
+    @test beta0 .≈ beta
+end

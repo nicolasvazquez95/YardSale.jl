@@ -57,6 +57,57 @@ function mc_set_initial_conditions(
 end
 
 """
+    mc_set_beta(N, initial_conditions, beta0=nothing)
+Set the initial risk aversion for the Monte Carlo simulation.
+
+# Arguments
+    N::Integer: Number of agents.
+    initial_conditions::String: Initial condition. Options are "uniform", "random", "noisy"
+    and "custom".
+    beta0::Union{Nothing, Vector{<:Real}}=nothing: Initial risk propension. Only used if
+    initial_conditions="custom". Default is nothing.
+
+# Returns
+    beta_::Vector{Real}: Initial risk aversion distribution.
+"""
+function mc_set_beta(
+    N::Integer,
+    beta::String,
+    beta0::Union{Nothing, Real, Vector{<:Real}}=nothing;
+    σ::Real=0.01
+)
+    # Check if the initial conditions are valid
+    valid_initial_conditions = ["uniform", "random", "noisy", "custom"]
+    if beta ∉ valid_initial_conditions
+        throw(ArgumentError("Invalid initial condition. Must be one of
+        $valid_initial_conditions."))
+    end
+    if beta == "uniform"
+        beta_ = fill(beta0, N)
+    elseif beta == "random"
+        beta_ = rand(N)
+    elseif beta == "noisy"
+        gauss = Normal(beta0, σ)
+        noise = rand(gauss, N)
+        beta_ = fill(beta0, N) + noise
+    elseif beta == "custom"
+        if isnothing(beta0)
+            throw(ArgumentError("If initial_conditions is set to 'custom',
+             beta0 must be provided."))
+        end
+        if length(beta0) != N
+            throw(ArgumentError("The length of beta0 must be equal to N."))
+        end
+        # Every element of beta0 must be non-negative
+        if any(beta0 .< 0)
+            throw(ArgumentError("Every element of beta0 must be non-negative."))
+        end
+    end
+    return beta_
+end
+
+
+"""
     Δw(f, wi, wj)
 Calculate the amount of wealth exchanged between agents i and j in the EYSM model.
 # Arguments
