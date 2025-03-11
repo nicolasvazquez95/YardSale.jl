@@ -102,6 +102,7 @@ function mc_set_beta(
         if any(beta0 .< 0)
             throw(ArgumentError("Every element of beta0 must be non-negative."))
         end
+        beta_ = beta0
     end
     return beta_
 end
