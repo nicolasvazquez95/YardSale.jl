@@ -82,7 +82,7 @@ with risk aversion.
 # Returns
     Δw::Real: Amount of wealth exchanged between agents i and j.
 """
-Δw(wi::Real, wj::Real, ri::Real, rj::Real) = min(ri*wi, rj*wj)
+Δw_risk(wi::Real, wj::Real, ri::Real, rj::Real) = min(ri*wi, rj*wj)
 
 """
     ηij(wi, wj, zeta_W)

@@ -35,7 +35,7 @@ include("data_analysis/mc_analysis_functions.jl")
 # Exported functions
 # Utils
 export get_kappa_beta
-export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution
+export mc_set_initial_conditions, Δw, ηij, EYSM_base_redistribution, Δw_risk
 export ode_set_initial_conditions
 export get_giant_component, get_graph_data
 export x1_meanField

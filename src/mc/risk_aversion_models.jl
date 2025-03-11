@@ -10,6 +10,7 @@ in a fully connected network.
     steps::Integer: Number of MC steps
     initial_conditions::AbstractVector{<:Real}: Initial conditions
     beta::AbstractVector{<:Real}: Beta values (risk aversion)
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial conditions (optional)
     seed::Union{Nothing, Int64}: Seed for reproducibility (optional)
 
 # Details
@@ -28,19 +29,14 @@ function YS_base_risk(
     steps::Integer, # Number of MC steps
     initial_conditions::AbstractVector{<:Real}, # Initial conditions
     beta::AbstractVector{<:Real}; # Beta values
+    w0::Union{Nothing, Vector{<:Real}}=nothing, # Initial conditions (optional)
     seed::Union{Nothing, Int64} = nothing, # Seed for reproducibility (optional)
     save_every::Union{Nothing, Integer}=nothing
     )
 
     # Initialize the model with the initial conditions
-    w = copy(initial_conditions)
-    # Check if the initial conditions are correct
-    if length(w) != N
-        error("Initial conditions must have the same length as the number of agents")
-    end
-    # If the initial conditions are ok, calculate the total wealth and normalize it with W_N
-    W = W_N * N
-    w .*= W_N / sum(w) # Normalize the wealth
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
+    W = sum(w) # Total wealth
 
     # Check if the beta values are correct
     if length(beta) != N
@@ -86,7 +82,7 @@ function YS_base_risk(
             w_i, w_j = w[i], w[j] # Get the wealth of the agents
             r_i, r_j = r[i], r[j] # Get the risk propension of the agents
 
-            dw_exch = eta[exch] * Δw(w_i, w_j, r_i, r_j) # Calculate the wealth exchange
+            dw_exch = eta[exch] * Δw_risk(w_i, w_j, r_i, r_j) # Calculate the wealth exchange
             # Update the wealth of the agents
             w[i] += dw_exch
             w[j] -= dw_exch
@@ -121,6 +117,7 @@ in a complex network.
     steps::Integer: Number of MC steps
     initial_conditions::AbstractVector{<:Real}: Initial conditions
     beta::AbstractVector{<:Real}: Beta values (risk aversion)
+    w0::Union{Nothing, Vector{<:Real}}=nothing: Initial conditions (optional)
     seed::Union{Nothing, Int64}: Seed for reproducibility (optional)
     exchange_mode::String: "link" or "node"
 
@@ -149,6 +146,7 @@ function YS_net_risk(
     initial_conditions::AbstractVector{<:Real}, # Initial conditions
     exchange_mode::String, # "link" or "node"
     beta::AbstractVector{<:Real}; # Beta values
+    w0::Union{Nothing, Vector{<:Real}}=nothing, # Initial conditions (optional)
     seed::Union{Nothing, Int64} = nothing, # Seed for reproducibility (optional)
     save_every::Union{Nothing, Integer}=nothing
     )
@@ -161,14 +159,9 @@ function YS_net_risk(
     end
 
     # Initialize the model with the initial conditions
-    w = copy(initial_conditions)
-    # Check if the initial conditions are correct
-    if length(w) != N
-        error("Initial conditions must have the same length as the number of agents")
-    end
-    # If the initial conditions are ok, calculate the total wealth and normalize it with W_N
-    w .*= W_N / sum(w) # Normalize the wealth
-    W = W_N * N
+    w = mc_set_initial_conditions(N, W_N, initial_conditions, w0)
+    W = sum(w) # Total wealth
+
     # Check if the beta values are correct
     if length(beta) != N
         error("Beta values must have the same length as the number of agents")
@@ -212,7 +205,7 @@ function YS_net_risk(
                 w_i, w_j = w[i], w[j] # Get the wealth of the agents
                 r_i, r_j = r[i], r[j] # Get the risk propension of the agents
 
-                dw_exch = eta[exch] * dw(w_i, w_j, r_i, r_j) # Calculate the wealth exchange
+                dw_exch = eta[exch] * Δw_risk(w_i, w_j, r_i, r_j) # Calculate the wealth exchange
                 # Update the wealth of the agents
                 w[i] += dw_exch
                 w[j] -= dw_exch
