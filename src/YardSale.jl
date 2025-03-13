@@ -50,7 +50,7 @@ export get_x1, get_xi, get_gini, get_lorenz, get_R, get_u, get_r
 ## Development functions
 export EYSM_base_callbacks, EYSM_net_callbacks
 # Data analysis
-export rescale_t, get_lambda, get_max_eigenvalue
+export rescale_t, get_lambda, get_max_eigenvalue, projection_matrix, get_u_matrix, remove_zero_eigenvalue
 export get_x1, get_avg_x1
 
 end

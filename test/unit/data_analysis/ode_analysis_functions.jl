@@ -70,3 +70,48 @@ using YardSale, Test, Graphs
         ).u
     @test size(get_lambda(g, interaction_mode, taxation_mode, T, x_ss)) == (N_gc, N_gc)
 end
+
+@testset "remove_zero_eigenvalue" begin
+    # 1. Parameters for the test (an example graph, actual simulation)
+    N = 32
+    k_mean = 8
+    p = k_mean/(N-1)
+    seed = 42
+    g = erdos_renyi(N, p, seed=seed)
+    T = 1.0
+    interaction_mode = "A"
+    taxation_mode = "A"
+    # Run a simulation to get the steady state
+    x_ss = solve_ode_net_SS(
+        g,
+        interaction_mode,
+        taxation_mode,
+        T,
+        seed
+        ).u
+    # Get the lambda matrix
+    Lambda = get_lambda(g, interaction_mode, taxation_mode, T, x_ss)
+
+    # Test 1: Projection matrix
+    P = projection_matrix(Lambda)
+    @test size(P) == (N,N)
+    # Check that the projection matrix is idempotent
+    @test P*P ≈ P
+    # Check that the projected x_ss is orthogonal to the ones vector
+    @test dot(P*x_ss, ones(N)) ≈ 0.0
+
+    # Test 2: U matrix
+    # Quick check in a N=3 case
+    real_U = [1 0 -1; 0 1 -1]
+    U = get_u_matrix(3)
+    @test U ≈ real_U
+    # Check dimensions in a real case
+    U = get_u_matrix(N)
+    @test size(U) == (N-1, N)
+
+    # Test 3: Remove zero eigenvalue
+    # Check with the lambda matrix
+    lambda_double_prime = remove_zero_eigenvalue(Lambda)
+    @test size(lambda_double_prime) == (N-1, N-1)
+    # Check that the eigenvalues are not zero (TODO)
+end

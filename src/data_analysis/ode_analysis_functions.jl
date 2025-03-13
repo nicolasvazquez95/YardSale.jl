@@ -98,3 +98,103 @@ We use this function to determine the stability of the ODE system.
 function get_max_eigenvalue(Lambda::AbstractMatrix)
     return real(eigsolve(Lambda, 1, :LR)[1][1])
 end
+
+
+"""
+    projection_matrix(N::Integer)
+Get the projection matrix for the EYSM.
+# Arguments
+    N::Integer: Number of nodes.
+# Details
+The projection matrix is defined as:
+```math
+P = I - \\frac{1}{N} \\mathbf{1} \\mathbf{1}^T \\in \\mathbb{R}^{N \\times N}
+```
+where ``I`` is the identity matrix and ``\\mathbf{1}`` is a vector of ones.
+# Returns
+    P::Matrix{Float64}: Projection matrix.
+"""
+projection_matrix(N::Integer) = I - (1/N) * ones(N,N)
+
+"""
+    get_u_matrix(N::Integer)
+Get the U matrix for the EYSM.
+# Arguments
+    N::Integer: Number of nodes.
+# Details
+The U matrix is defined as:
+```math
+U = \\begin{bmatrix}
+1 & 1 & \\cdots & 0 & -1 \\\\
+0 & 1 & \\cdots & 0 & -1 \\\\
+\\vdots & \\vdots & \\ddots & \\vdots & \\vdots \\\\
+1 & 1 & \\cdots & 1 & -1 \\
+\\end{bmatrix} \\in \\mathbb{R}^{N - 1 \\times N}
+```
+It is used to remove the zero eigenvalue from the Lambda matrix.
+
+# Returns
+    U::Matrix{Float64}: U matrix.
+"""
+function get_u_matrix(N::Integer)
+    U = zeros(N-1,N)
+    # Fill diagonal with ones
+    for i in 1:N-1
+        U[i,i] = 1
+    end
+    # Fill the last column with -1
+    U[:,end] .= -ones(N)
+    return U
+end
+
+
+"""
+    remove_zero_eigenvalue(Lambda::Matrix{Float64})
+Fix the Lambda matrix to remove the zero eigenvalue.
+# Arguments
+    Lambda::Matrix{Float64}: Lambda matrix.
+# Details
+The system of ODEs for the EYSM has a zero eigenvalue. The demonstration will be in the paper.
+In order to study the stability of the system, we need to remove the null contributions,
+which are related to the wealth conservation constraint.
+
+To do this, we calculate a new matrix ``\\Lambda''`` as follows:
+1. First, we define the projection ``N \\times N`` matrix ``P`` as:
+```math
+P = I - \\frac{1}{N} \\mathbf{1} \\mathbf{1}^T \\in \\mathbb{R}^{N \\times N}
+```
+where ``I`` is the identity matrix and ``\\mathbf{1}`` is a vector of ones.
+This matrix projects any vector to the subspace orthogonal to the vector of ones.
+2. We define the matrix ``\\Lambda'`` as:
+```math
+\\Lambda' = P \\Lambda P^T \\in \\mathbb{R}^{N \\times N}
+```
+3. To eliminate the zero eigenvalue, we introduce a change of basis through the matrix ``U``
+```math
+U = \\begin{bmatrix}
+1 & 1 & \\cdots & 0 & -1 \\\\
+0 & 1 & \\cdots & 0 & -1 \\\\
+\\vdots & \\vdots & \\ddots & \\vdots & \\vdots \\\\
+1 & 1 & \\cdots & 1 & -1 \\
+\\end{bmatrix} \\in \\mathbb{R}^{N -1 \\times N}
+```
+4. The new matrix ``\\Lambda''`` is defined as:
+```math
+\\Lambda'' = U \\Lambda' U^T \\in \\mathbb{R}^{N - 1 \\times N - 1}
+            = U P \\Lambda P^T U^T
+```
+By construction, the matrix ``\\Lambda''`` has no zero eigenvalues.
+# Returns
+    Lambda_prime::Matrix{Float64}: Fixed Lambda matrix.
+"""
+function remove_zero_eigenvalue(Lambda::Matrix{Float64})
+    N = size(Lambda,1)
+    # Step 1: Define the projection matrix
+    P = projection_matrix(N)
+    # Step 2: Calculate Lambda_prime = P * Lambda * P'
+    Lambda_prime = P * Lambda * P'
+    # Step 3: Define the matrix U
+    U = get_u_matrix(N)
+    # Step 4: Calculate Lambda''
+    return U * Lambda_prime * U'
+end
