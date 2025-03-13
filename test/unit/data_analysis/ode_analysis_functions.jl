@@ -1,4 +1,4 @@
-using YardSale, Test, Graphs
+using YardSale, Test, Graphs, LinearAlgebra
 
 # Test get_lambda and get_max_eigenvalue
 @testset "Test get_lambda and get_max_eigenvalue" begin
@@ -73,7 +73,7 @@ end
 
 @testset "remove_zero_eigenvalue" begin
     # 1. Parameters for the test (an example graph, actual simulation)
-    N = 32
+    N = 128
     k_mean = 8
     p = k_mean/(N-1)
     seed = 42
@@ -99,7 +99,7 @@ end
     @test P*P ≈ P
     # Check that the projected x_ss is orthogonal to the ones vector
     x_proj = P*x_ss
-    @test dot(x_proj, ones(N)) ≈ 0.0
+    @test isapprox(dot(x_proj, ones(N)), 0.0, atol=1e-15)
 
     # Test 2: U matrix
     # Quick check in a N=3 case
