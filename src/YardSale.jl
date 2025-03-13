@@ -10,7 +10,7 @@ using Graphs
 using Distributions
 using Random
 using Statistics
-using KrylovKit
+using LinearAlgebra, KrylovKit
 
 # Include statements
 # Utils

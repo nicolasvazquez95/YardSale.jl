@@ -93,12 +93,13 @@ end
     Lambda = get_lambda(g, interaction_mode, taxation_mode, T, x_ss)
 
     # Test 1: Projection matrix
-    P = projection_matrix(Lambda)
+    P = projection_matrix(N)
     @test size(P) == (N,N)
     # Check that the projection matrix is idempotent
     @test P*P ≈ P
     # Check that the projected x_ss is orthogonal to the ones vector
-    @test dot(P*x_ss, ones(N)) ≈ 0.0
+    x_proj = P*x_ss
+    @test dot(x_proj, ones(N)) ≈ 0.0
 
     # Test 2: U matrix
     # Quick check in a N=3 case
